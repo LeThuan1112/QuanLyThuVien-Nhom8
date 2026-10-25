@@ -1,0 +1,305 @@
+@using System.Text.Json
+@model DashboardViewModel
+@{
+    ViewData["Title"] = L["Dash_Title"].Value;
+    var now = DateTime.Now;
+    var maxTop = Model.TopBooks.Any() ? Model.TopBooks.Max(x => x.Count) : 1;
+    var noDays = !Model.BorrowedPerDay.Any(x => x > 0) && !Model.ReturnedPerDay.Any(x => x > 0);
+}
+<div class="mb-4">
+    <h1 class="h3 mb-1">@L["Dash_Title"]</h1>
+    <div class="text-muted">@now.ToString("dd/MM/yyyy")</div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-2">
+        <a class="card kpi" asp-controller="Books" asp-action="Index">
+            <div class="kpi-icon bg-soft-primary"><i class="bi bi-book"></i></div>
+            <div><div class="label">@L["Dash_BookTitles"]</div><div class="value">@Model.BookTitles</div></div>
+        </a>
+    </div>
+    <div class="col-6 col-xl-2">
+        <div class="card kpi">
+            <div class="kpi-icon bg-soft-purple"><i class="bi bi-collection"></i></div>
+            <div><div class="label">@L["Dash_TotalCopies"]</div><div class="value">@Model.TotalCopies</div></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-2">
+        <div class="card kpi">
+            <div class="kpi-icon bg-soft-success"><i class="bi bi-check2-circle"></i></div>
+            <div><div class="label">@L["Dash_Available"]</div><div class="value">@Model.AvailableCopies</div></div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-2">
+        <a class="card kpi" asp-controller="Readers" asp-action="Index">
+            <div class="kpi-icon bg-soft-info"><i class="bi bi-people"></i></div>
+            <div><div class="label">@L["Dash_Readers"]</div><div class="value">@Model.Readers</div></div>
+        </a>
+    </div>
+    <div class="col-6 col-xl-2">
+        <a class="card kpi" asp-controller="Loans" asp-action="Index" asp-route-status="borrowing">
+            <div class="kpi-icon bg-soft-warning"><i class="bi bi-journal-arrow-up"></i></div>
+            <div><div class="label">@L["Dash_Borrowing"]</div><div class="value">@Model.Borrowing</div></div>
+        </a>
+    </div>
+    <div class="col-6 col-xl-2">
+        <a class="card kpi" asp-controller="Loans" asp-action="Overdue">
+            <div class="kpi-icon bg-soft-danger"><i class="bi bi-exclamation-triangle"></i></div>
+            <div><div class="label">@L["Dash_Overdue"]</div><div class="value text-danger">@Model.Overdue</div></div>
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header">@L["Dash_Chart14"]</div>
+            <div class="card-body">
+                @if (noDays)
+                {
+                    <div class="text-muted small mb-2">@L["Dash_NoData"]</div>
+                }
+                <div class="chart-box"><canvas id="chartDays"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">@L["Dash_ByCategory"]</div>
+            <div class="card-body">
+                <div class="chart-box"><canvas id="chartCategories"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">@L["Dash_TopBooks"]</div>
+            <div class="card-body">
+                @if (!Model.TopBooks.Any())
+                {
+                    <div class="text-muted">@L["Dash_NoData"]</div>
+                }
+                @foreach (var t in Model.TopBooks)
+                {
+                    var pct = (int)Math.Round(t.Count * 100.0 / maxTop);
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-truncate pe-2">@t.Title</span>
+                            <span class="fw-semibold">@t.Count</span>
+                        </div>
+                        <div class="progress" style="height:6px"><div class="progress-bar" style="width:@(pct)%"></div></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>@L["Dash_RecentLoans"]</span>
+                <a class="small text-decoration-none" asp-controller="Loans" asp-action="Index">@L["Home_ViewAll"]</a>
+            </div>
+            <div class="list-group list-group-flush">
+                @if (!Model.RecentLoans.Any())
+                {
+                    <div class="p-3 text-muted">@L["Dash_NoData"]</div>
+                }
+                @foreach (var l in Model.RecentLoans)
+                {
+                    <a class="list-group-item list-group-item-action" asp-controller="Loans" asp-action="Details" asp-route-id="@l.LoanId">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-semibold">#@l.LoanId - @l.Reader?.FullName</span>
+                            <span class="small text-muted">@l.LoanDate.ToString("dd/MM")</span>
+                        </div>
+                        <div class="small text-muted">@l.Details.Count - @l.Reader?.ReaderCode</div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>@L["Dash_OverdueAlert"]</span>
+                <a class="small text-decoration-none" asp-controller="Loans" asp-action="Overdue">@L["Home_ViewAll"]</a>
+            </div>
+            <div class="list-group list-group-flush">
+                @if (!Model.OverdueItems.Any())
+                {
+                    <div class="p-3 text-success"><i class="bi bi-check-circle"></i> @L["Dash_NoOverdue"]</div>
+                }
+                @foreach (var d in Model.OverdueItems)
+                {
+                    var days = Math.Max(1, (DateTime.Today - d.Loan!.DueDate.Date).Days);
+                    <a class="list-group-item list-group-item-action" asp-controller="Loans" asp-action="Details" asp-route-id="@d.LoanId">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-semibold text-truncate pe-2">@d.Book?.Title</span>
+                            <span class="badge text-bg-danger">@days</span>
+                        </div>
+                        <div class="small text-muted">@d.Loan.Reader?.FullName</div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@{ var isAdminUser = User.IsInRole(AppRoles.Admin); }
+@if (isAdminUser)
+{
+    <div class="row g-3 mt-1">
+        <div class="col-12">
+            <h2 class="h5 mb-0"><i class="bi bi-shield-lock"></i> Quản trị hệ thống</h2>
+        </div>
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header">Tài khoản người dùng</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between py-1"><span>Tổng số tài khoản</span><strong>@Model.TotalUsers</strong></div>
+                    <div class="d-flex justify-content-between py-1"><span>Quản trị viên</span><strong>@Model.AdminCount</strong></div>
+                    <div class="d-flex justify-content-between py-1"><span>Thủ thư</span><strong>@Model.LibrarianCount</strong></div>
+                    <div class="d-flex justify-content-between py-1"><span>Độc giả</span><strong>@Model.ReaderAccountCount</strong></div>
+                    <div class="d-flex justify-content-between py-1"><span>Đang bị khóa</span><strong class="text-danger">@Model.LockedUsers</strong></div>
+                    <div class="d-flex gap-2 mt-3">
+                        <a class="btn btn-sm btn-primary" asp-controller="Users" asp-action="Index">Quản lý tài khoản</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Settings" asp-action="Index">Cài đặt</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Hoạt động gần đây</span>
+                    <a class="small text-decoration-none" asp-controller="AuditLogs" asp-action="Index">Xem nhật ký</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    @if (!Model.RecentLogs.Any())
+                    {
+                        <div class="p-3 text-muted">Chưa có hoạt động nào được ghi nhận.</div>
+                    }
+                    @foreach (var lg in Model.RecentLogs)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-semibold">@lg.Action</span>
+                                <span class="text-muted small"> - @(string.IsNullOrEmpty(lg.Username) ? "?" : lg.Username)</span>
+                                <div class="small text-muted">@lg.Detail</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge @(lg.Success ? "text-bg-success" : "text-bg-danger")">@(lg.Success ? "Thành công" : "Thất bại")</span>
+                                <div class="small text-muted">@lg.CreatedAt.ToString("dd/MM HH:mm")</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3 mt-1">
+        <div class="col-12">
+            <h2 class="h5 mb-0"><i class="bi bi-list-check"></i> Việc cần làm hôm nay</h2>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">Sách đến hạn trả hôm nay</div>
+                <div class="list-group list-group-flush">
+                    @if (!Model.DueToday.Any())
+                    {
+                        <div class="p-3 text-success"><i class="bi bi-check-circle"></i> Không có sách đến hạn hôm nay.</div>
+                    }
+                    @foreach (var d in Model.DueToday)
+                    {
+                        <a class="list-group-item list-group-item-action" asp-controller="Loans" asp-action="Details" asp-route-id="@d.LoanId">
+                            <div class="fw-semibold">@d.Book?.Title</div>
+                            <div class="small text-muted">@d.Loan?.Reader?.ReaderCode - @d.Loan?.Reader?.FullName</div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Sách đã hết bản</span>
+                    <a class="small text-decoration-none" asp-controller="Books" asp-action="Index" asp-route-availability="unavailable">Xem tất cả</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    @if (!Model.OutOfStock.Any())
+                    {
+                        <div class="p-3 text-success"><i class="bi bi-check-circle"></i> Tất cả sách đều còn bản.</div>
+                    }
+                    @foreach (var b in Model.OutOfStock)
+                    {
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between" asp-controller="Books" asp-action="Details" asp-route-id="@b.BookId">
+                            <span>@b.Title</span>
+                            <span class="badge text-bg-danger">Hết sách</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script>
+        (function () {
+            var labels = @Html.Raw(JsonSerializer.Serialize(Model.DayLabels));
+            var borrowed = @Html.Raw(JsonSerializer.Serialize(Model.BorrowedPerDay));
+            var returned = @Html.Raw(JsonSerializer.Serialize(Model.ReturnedPerDay));
+            var catNames = @Html.Raw(JsonSerializer.Serialize(Model.CategoryNames));
+            var catCounts = @Html.Raw(JsonSerializer.Serialize(Model.CategoryCounts));
+            var lblBorrowed = @Html.Raw(JsonSerializer.Serialize(L["Dash_Borrowed"].Value));
+            var lblReturned = @Html.Raw(JsonSerializer.Serialize(L["Dash_Returned"].Value));
+
+            var el1 = document.getElementById('chartDays');
+            if (el1 && window.Chart) {
+                new Chart(el1, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: lblBorrowed, data: borrowed, backgroundColor: '#4f46e5', borderRadius: 6 },
+                            { label: lblReturned, data: returned, backgroundColor: '#10b981', borderRadius: 6 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            var el2 = document.getElementById('chartCategories');
+            if (el2 && window.Chart) {
+                new Chart(el2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: catNames,
+                        datasets: [{
+                            data: catCounts,
+                            backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#8b5cf6'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '62%',
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+        })();
+    </script>
+}

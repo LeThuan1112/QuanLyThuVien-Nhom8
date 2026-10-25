@@ -1,0 +1,34 @@
+@model ThuVien.Models.Reader
+@{
+    ViewData["Title"] = "Thêm độc giả";
+}
+
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Thêm độc giả</h1>
+        <p class="text-muted mb-0">Nhập thông tin để tạo hồ sơ độc giả mới. <span class="text-danger">*</span> Trường bắt buộc; mã độc giả được tự động cấp.</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-action="Index">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post" class="needs-validation" novalidate>
+            @Html.AntiForgeryToken()
+
+            @* Chỉ hiển thị lỗi cấp form khi thực sự có lỗi; tránh khung cảnh báo đỏ/hồng trống. *@
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <partial name="_ReaderFields" model="Model" />
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-person-plus me-1"></i> Lưu độc giả
+                </button>
+                <a class="btn btn-light border" asp-action="Index">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

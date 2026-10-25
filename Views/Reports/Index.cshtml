@@ -1,0 +1,127 @@
+@model ReportViewModel
+@{
+    ViewData["Title"] = "Báo cáo thống kê";
+    var now = DateTime.Now;
+    var fromStr = Model.From.ToString("yyyy-MM-dd");
+    var toStr = Model.To.ToString("yyyy-MM-dd");
+}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-0">Báo cáo thống kê</h1>
+        <div class="text-muted small">Số liệu được tính trực tiếp từ cơ sở dữ liệu.</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-success" asp-action="ExportLoans" asp-route-from="@fromStr" asp-route-to="@toStr"><i class="bi bi-file-earmark-spreadsheet"></i> Xuất CSV mượn/trả</a>
+        <a class="btn btn-outline-success" asp-action="ExportRenewals" asp-route-from="@fromStr" asp-route-to="@toStr"><i class="bi bi-calendar2-check"></i> Xuất CSV gia hạn</a>
+        <a class="btn btn-outline-success" asp-action="ExportBooks"><i class="bi bi-file-earmark-spreadsheet"></i> Xuất CSV danh sách sách</a>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="card card-body mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-6 col-md-3">
+            <label class="form-label" for="from">Từ ngày</label>
+            <input type="date" id="from" name="from" value="@fromStr" class="form-control" />
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="form-label" for="to">Đến ngày</label>
+            <input type="date" id="to" name="to" value="@toStr" class="form-control" />
+        </div>
+        <div class="col-12 col-md-3 d-grid">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Xem báo cáo</button>
+        </div>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl">
+        <div class="card kpi"><div class="kpi-icon bg-soft-primary"><i class="bi bi-receipt"></i></div>
+            <div><div class="label">Số phiếu mượn</div><div class="value">@Model.LoanCount</div></div></div>
+    </div>
+    <div class="col-6 col-xl">
+        <div class="card kpi"><div class="kpi-icon bg-soft-warning"><i class="bi bi-journal-arrow-up"></i></div>
+            <div><div class="label">Số cuốn đã mượn</div><div class="value">@Model.BorrowedCopies</div></div></div>
+    </div>
+    <div class="col-6 col-xl">
+        <div class="card kpi"><div class="kpi-icon bg-soft-success"><i class="bi bi-journal-arrow-down"></i></div>
+            <div><div class="label">Số cuốn đã trả</div><div class="value">@Model.ReturnedCopies</div></div></div>
+    </div>
+    <div class="col-6 col-xl">
+        <div class="card kpi"><div class="kpi-icon bg-soft-info"><i class="bi bi-person-plus"></i></div>
+            <div><div class="label">Thẻ mới cấp</div><div class="value">@Model.NewReaders</div></div></div>
+    </div>
+    <div class="col-12 col-xl">
+        <div class="card kpi"><div class="kpi-icon bg-soft-danger"><i class="bi bi-exclamation-triangle"></i></div>
+            <div><div class="label">Quá hạn hiện tại</div><div class="value text-danger">@Model.OverdueNow</div></div></div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Sách được mượn nhiều trong kỳ</div>
+            <div class="card-body">
+                @if (!Model.TopBooks.Any()) { <div class="text-muted">Không có dữ liệu trong khoảng thời gian này.</div> }
+                @foreach (var t in Model.TopBooks)
+                {
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>@t.Title</span><span class="fw-semibold">@t.Count lượt</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">Độc giả mượn nhiều trong kỳ</div>
+            <div class="card-body">
+                @if (!Model.TopReaders.Any()) { <div class="text-muted">Không có dữ liệu trong khoảng thời gian này.</div> }
+                @foreach (var t in Model.TopReaders)
+                {
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span>@t.Title</span><span class="fw-semibold">@t.Count cuốn</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-6"><div class="card card-body"><div class="text-muted small">Tổng phí phạt quá hạn ghi nhận khi trả sách trong kỳ</div><div class="h5 mb-0">@Model.TotalFines.ToString("N0") đ</div></div></div>
+    <div class="col-md-6"><div class="card card-body"><div class="text-muted small">Tổng phí gia hạn phát sinh trong kỳ</div><div class="h5 mb-0">@Model.TotalRenewalFees.ToString("N0") đ</div></div></div>
+</div>
+<div class="text-muted small mb-3">Các khoản trên là phí ghi nhận trong hệ thống, không xác nhận đã thu tiền vì ứng dụng chưa có chức năng thanh toán.</div>
+
+<h2 class="h5 mb-3">Phiếu mượn trong kỳ <small class="text-muted">(hiển thị tối đa 50 phiếu mới nhất; xuất CSV để xem đầy đủ)</small></h2>
+@if (!Model.Loans.Any())
+{
+    <div class="alert alert-info">Không có phiếu mượn nào trong khoảng thời gian này.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr><th>Mã phiếu</th><th>Độc giả</th><th>Ngày mượn</th><th>Hạn trả</th><th class="text-center">Số cuốn</th><th class="text-center">Chưa trả</th><th>Trạng thái</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model.Loans)
+                {
+                    var unreturned = l.Details.Count(d => d.ReturnDate == null);
+                    var status = unreturned == 0 ? LoanStatus.Returned : (l.DueDate.Date < DateTime.Today ? LoanStatus.Overdue : LoanStatus.Borrowing);
+                    <tr>
+                        <td>#@l.LoanId</td>
+                        <td>@l.Reader?.ReaderCode - @l.Reader?.FullName</td>
+                        <td>@l.LoanDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@l.DueDate.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">@l.Details.Count</td>
+                        <td class="text-center">@unreturned</td>
+                        <td><span class="badge @LoanStatus.BadgeClass(status)">@status</span></td>
+                        <td class="text-end"><a asp-controller="Loans" asp-action="Details" asp-route-id="@l.LoanId" class="btn btn-sm btn-outline-primary">Chi tiết</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

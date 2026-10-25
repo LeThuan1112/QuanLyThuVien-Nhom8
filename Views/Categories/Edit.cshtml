@@ -1,0 +1,16 @@
+@model Category
+@{
+    ViewData["Title"] = "Sửa thể loại";
+}
+<h1 class="h3 mb-3">Sửa thể loại</h1>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" asp-route-id="@Model.CategoryId" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+            <input type="hidden" asp-for="CategoryId" />
+            <partial name="_CategoryFields" model="Model" />
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+        </form>
+    </div>
+</div>

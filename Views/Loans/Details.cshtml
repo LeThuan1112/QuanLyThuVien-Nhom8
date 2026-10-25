@@ -1,0 +1,140 @@
+@model Loan
+@{
+    ViewData["Title"] = "Phiếu mượn #" + Model.LoanId;
+    var now = DateTime.Now;
+    var unreturned = Model.Details.Count(d => d.ReturnDate == null);
+    var maxRenewals = ViewBag.MaxRenewals is int max ? max : 0;
+    var renewDays = ViewBag.RenewDays is int days ? days : 7;
+    var renewalFeePerBook = ViewBag.RenewalFeePerBook is int fee ? fee : 2000;
+    var canRenew = unreturned > 0 && maxRenewals > 0 && Model.RenewCount < maxRenewals && Model.DueDate.Date >= now.Date;
+    var expectedRenewalFee = (decimal)renewalFeePerBook * unreturned;
+    var expectedRenewalFeeText = expectedRenewalFee.ToString("N0");
+    var totalFine = Model.Details.Sum(d => d.FineAmount);
+    var totalRenewalFee = Model.Renewals.Sum(r => r.FeeAmount);
+}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h1 class="h3 mb-0">Phiếu mượn #@Model.LoanId</h1>
+    <div class="d-flex gap-2 no-print">
+        @if (canRenew)
+        {
+            <form asp-action="Renew" asp-route-id="@Model.LoanId" method="post"
+                  onsubmit="return confirm('Gia hạn thêm @renewDays ngày và ghi nhận phí @expectedRenewalFeeText đ?');">
+                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-calendar-plus"></i> Gia hạn +@renewDays ngày · @expectedRenewalFeeText đ</button>
+            </form>
+        }
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer"></i> In phiếu</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="text-muted small">Độc giả</div>
+                <div class="fw-semibold"><a asp-controller="Readers" asp-action="Details" asp-route-id="@Model.ReaderId">@Model.Reader?.ReaderCode - @Model.Reader?.FullName</a></div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Ngày mượn</div>
+                <div class="fw-semibold">@Model.LoanDate.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Hạn trả</div>
+                <div class="fw-semibold">@Model.DueDate.ToString("dd/MM/yyyy")</div>
+            </div>
+            <div class="col-md-6">
+                <div class="text-muted small">Người lập phiếu</div>
+                <div class="fw-semibold">@Model.CreatedByUser?.FullName</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Số lần gia hạn</div>
+                <div class="fw-semibold">@Model.RenewCount / @maxRenewals</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Tổng phí phạt quá hạn</div>
+                <div class="fw-semibold @(totalFine > 0 ? "text-danger" : "")">@totalFine.ToString("N0") đ</div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-muted small">Tổng phí gia hạn</div>
+                <div class="fw-semibold">@totalRenewalFee.ToString("N0") đ</div>
+            </div>
+            <div class="col-12">
+                <div class="text-muted small">Ghi chú</div>
+                <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Note) ? "-" : Model.Note)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="h5 mb-0">Sách trong phiếu</h2>
+    @if (unreturned > 1)
+    {
+        <form asp-action="ReturnAll" asp-route-id="@Model.LoanId" method="post" class="no-print"
+              onsubmit="return confirm('Xác nhận trả tất cả sách còn lại trong phiếu?');">
+            <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check2-all"></i> Trả tất cả</button>
+        </form>
+    }
+</div>
+<div class="table-responsive mb-4">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Mã sách</th>
+                <th>Tên sách</th>
+                <th>Trạng thái</th>
+                <th>Ngày trả</th>
+                <th>Người nhận</th>
+                <th class="text-end">Phí phạt</th>
+                <th class="text-end no-print"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var d in Model.Details)
+            {
+                var status = LoanStatus.Of(d.ReturnDate, Model.DueDate, now);
+                <tr>
+                    <td>@d.Book?.BookCode</td>
+                    <td>@d.Book?.Title</td>
+                    <td><span class="badge @LoanStatus.BadgeClass(status)">@status</span></td>
+                    <td>@(d.ReturnDate?.ToString("dd/MM/yyyy HH:mm"))</td>
+                    <td>@d.ReceivedByUser?.FullName</td>
+                    <td class="text-end">@(d.FineAmount > 0 ? d.FineAmount.ToString("N0") + " đ" : "-")</td>
+                    <td class="text-end no-print">
+                        @if (d.ReturnDate == null)
+                        {
+                            <form asp-action="Return" asp-route-id="@d.LoanDetailId" asp-route-loanId="@Model.LoanId" method="post"
+                                  onsubmit="return confirm('Xác nhận độc giả đã trả cuốn này?');">
+                                <button type="submit" class="btn btn-sm btn-success">Trả sách</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.Renewals.Any())
+{
+    <h2 class="h5 mb-2">Lịch sử gia hạn</h2>
+    <div class="table-responsive mb-4">
+        <table class="table table-sm align-middle">
+            <thead><tr><th>Ngày gia hạn</th><th>Lượt</th><th>Số ngày cộng thêm</th><th>Cuốn còn mượn</th><th>Người thực hiện</th><th class="text-end">Phí phát sinh</th></tr></thead>
+            <tbody>
+            @foreach (var renewal in Model.Renewals.OrderByDescending(r => r.RenewedAt))
+            {
+                <tr>
+                    <td>@renewal.RenewedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@renewal.RenewCount</td>
+                    <td>@renewal.RenewDays ngày</td>
+                    <td>@renewal.OutstandingCopies</td>
+                    <td>@renewal.RenewedByUser?.FullName</td>
+                    <td class="text-end">@renewal.FeeAmount.ToString("N0") đ</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <div class="text-muted small">Đây là khoản phí phát sinh, chưa thể hiện trạng thái đã thu tiền.</div>
+    </div>
+}

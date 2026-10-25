@@ -1,0 +1,95 @@
+@model BookListViewModel
+@{
+    ViewData["Title"] = L["Books_Title"].Value;
+    var isStaff = User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Librarian);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">@L["Books_Title"]</h1>
+    @if (isStaff)
+    {
+        <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg"></i> @L["Books_Add"]</a>
+    }
+</div>
+
+<form id="filterForm" method="get" asp-action="Index" class="card card-body mb-3">
+    <div class="row g-2">
+        <div class="col-12 col-md-4">
+            <input type="text" name="keyword" value="@Model.Keyword" class="form-control" placeholder="@L["Books_SearchPh"]" />
+        </div>
+        <div class="col-6 col-md-2">
+            <select name="categoryId" class="form-select">
+                <option value="">@L["Books_AllCategories"]</option>
+                @foreach (var c in Model.Categories)
+                {
+                    <option value="@c.CategoryId" selected="@(Model.CategoryId == c.CategoryId)">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <select name="availability" class="form-select">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Availability))">@L["Books_AllStatus"]</option>
+                <option value="available" selected="@(Model.Availability == "available")">@L["Books_StatusAvailable"]</option>
+                <option value="unavailable" selected="@(Model.Availability == "unavailable")">@L["Books_StatusUnavailable"]</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <select name="sort" class="form-select">
+                <option value="title" selected="@(Model.Sort == "title")">@L["Sort_TitleAsc"]</option>
+                <option value="title_desc" selected="@(Model.Sort == "title_desc")">@L["Sort_TitleDesc"]</option>
+                <option value="code" selected="@(Model.Sort == "code")">@L["Sort_CodeAsc"]</option>
+                <option value="code_desc" selected="@(Model.Sort == "code_desc")">@L["Sort_CodeDesc"]</option>
+                <option value="year_desc" selected="@(Model.Sort == "year_desc")">@L["Sort_YearDesc"]</option>
+                <option value="year" selected="@(Model.Sort == "year")">@L["Sort_YearAsc"]</option>
+                <option value="available_desc" selected="@(Model.Sort == "available_desc")">@L["Sort_AvailDesc"]</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> @L["Btn_Search"]</button>
+        </div>
+    </div>
+</form>
+
+<div id="bookList">
+    <partial name="_BookList" model="Model" />
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var ajaxError = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(L["Books_AjaxError"].Value));
+            var $form = $('#filterForm');
+            var $list = $('#bookList');
+            var timer = null;
+
+            function load(page) {
+                var data = $form.serializeArray();
+                data.push({ name: 'page', value: page || 1 });
+                $list.addClass('opacity-50').attr('aria-busy', 'true');
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'GET',
+                    data: $.param(data),
+                    dataType: 'html'
+                }).done(function (html) {
+                    $list.html(html);
+                }).fail(function () {
+                    $list.prepend($('<div/>', { class: 'alert alert-danger' }).text(ajaxError));
+                }).always(function () {
+                    $list.removeClass('opacity-50').removeAttr('aria-busy');
+                });
+            }
+
+            $form.on('submit', function (e) { e.preventDefault(); load(1); });
+            $form.find('select').on('change', function () { load(1); });
+            $form.find('input[name=keyword]').on('input', function () {
+                clearTimeout(timer);
+                timer = setTimeout(function () { load(1); }, 350);
+            });
+            $list.on('click', '.page-link', function (e) {
+                e.preventDefault();
+                var p = $(this).data('page');
+                if (p) { load(p); }
+            });
+        })();
+    </script>
+}

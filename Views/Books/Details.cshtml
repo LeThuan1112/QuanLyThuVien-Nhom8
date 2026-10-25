@@ -1,0 +1,83 @@
+@model Book
+@{
+    ViewData["Title"] = Model.Title;
+    var isStaff = User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Librarian);
+    var isReader = User.IsInRole(AppRoles.Reader);
+    var availableToBorrow = ViewBag.AvailableToBorrow is int available ? available : Model.AvailableCopies;
+    var canReserve = ViewBag.CanReserve is bool reserve && reserve;
+}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb small"><li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a></li><li class="breadcrumb-item"><a asp-action="Index">@L["Nav_Books"]</a></li><li class="breadcrumb-item active" aria-current="page">@Model.Title</li></ol>
+</nav>
+<div class="row g-4 align-items-start">
+    <div class="col-12 col-md-4 col-xl-3">
+        <div class="card border-0 shadow-sm book-detail-cover-card">
+            <div class="book-detail-cover">
+                @if (!string.IsNullOrWhiteSpace(Model.CoverImageUrl))
+                {
+                    <img src="@Model.CoverImageUrl" alt="@Model.Title" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'" />
+                    <div class="catalog-cover-placeholder" style="display:none"><i class="bi bi-book-half"></i><span>@Model.Title</span></div>
+                }
+                else
+                {
+                    <div class="catalog-cover-placeholder"><i class="bi bi-book-half"></i><span>@Model.Title</span></div>
+                }
+            </div>
+            <div class="card-body">
+                @if (!Model.IsActive)
+                { <span class="badge text-bg-secondary">@L["Status_Inactive"]</span> }
+                else if (availableToBorrow > 0)
+                { <span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>@L["Status_Available"]</span> }
+                else
+                { <span class="badge text-bg-warning"><i class="bi bi-clock me-1"></i>@L["Status_Out"]</span> }
+                <div class="text-muted small mt-2">@L["Book_Copies"]</div><div class="fw-semibold">@availableToBorrow / @Model.TotalCopies</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-8 col-xl-9">
+        <div class="mb-3"><span class="badge text-bg-light border text-primary mb-2">@Model.Category?.Name</span><h1 class="display-6 fw-bold mb-2">@Model.Title</h1><p class="lead text-muted mb-0">@Model.Author</p></div>
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-header">@L["Book_DetailHeading"]</div>
+            <div class="card-body">
+                <dl class="row mb-0 book-detail-list">
+                    <dt class="col-sm-4">@L["Col_Code"]</dt><dd class="col-sm-8">@Model.BookCode</dd>
+                    <dt class="col-sm-4">@L["Book_Author"]</dt><dd class="col-sm-8">@Model.Author</dd>
+                    <dt class="col-sm-4">@L["Book_Category"]</dt><dd class="col-sm-8">@Model.Category?.Name</dd>
+                    <dt class="col-sm-4">@L["Book_Publisher"]</dt><dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Publisher) ? L["Book_YearUnknown"].Value : Model.Publisher)</dd>
+                    <dt class="col-sm-4">@L["Book_Year"]</dt><dd class="col-sm-8">@(Model.PublishYear?.ToString() ?? L["Book_YearUnknown"].Value)</dd>
+                    <dt class="col-sm-4">@L["Book_ISBN"]</dt><dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.ISBN) ? "—" : Model.ISBN)</dd>
+                    <dt class="col-sm-4">@L["Book_Shelf"]</dt><dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.ShelfLocation) ? "—" : Model.ShelfLocation)</dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        <dt class="col-sm-4">@L["Book_Description"]</dt><dd class="col-sm-8 book-description">@Model.Description</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-outline-secondary" asp-action="Index"><i class="bi bi-arrow-left me-1"></i>@L["Book_BackCatalog"]</a>
+            @if (isStaff)
+            {
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.BookId"><i class="bi bi-pencil me-1"></i>@L["Btn_Edit"]</a>
+            }
+            @if (isReader && canReserve && Model.IsActive)
+            {
+                <form asp-controller="Reservations" asp-action="Create" method="post">
+                    <input type="hidden" name="bookId" value="@Model.BookId" />
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-bookmark-plus me-1"></i>@L["Book_Reserve"]</button>
+                </form>
+            }
+            else if (!(User.Identity?.IsAuthenticated ?? false))
+            {
+                @if (canReserve && Model.IsActive)
+                {
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Books", new { id = Model.BookId })"><i class="bi bi-box-arrow-in-right me-1"></i>@L["Book_ReserveLogin"]</a>
+                }
+            }
+        </div>
+        @if (isReader && canReserve && Model.IsActive)
+        {
+            <p class="small text-muted mt-3"><i class="bi bi-info-circle me-1"></i>@L["Book_ReserveHelp"]</p>
+        }
+    </div>
+</div>

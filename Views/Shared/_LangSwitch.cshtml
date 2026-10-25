@@ -1,0 +1,26 @@
+@using System.Globalization
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<div class="dropdown">
+    <button class="btn btn-light border btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-translate"></i> @lang.ToUpperInvariant()
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <form asp-controller="Culture" asp-action="Set" method="post">
+                <input type="hidden" name="culture" value="vi" />
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                <button type="submit" class="dropdown-item">Tiếng Việt</button>
+            </form>
+        </li>
+        <li>
+            <form asp-controller="Culture" asp-action="Set" method="post">
+                <input type="hidden" name="culture" value="en" />
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                <button type="submit" class="dropdown-item">English</button>
+            </form>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,98 @@
+@model ReaderListViewModel
+@{
+    ViewData["Title"] = "Độc giả";
+    var today = DateTime.Today;
+    var pager = new PagerViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Action = "Index",
+        Controller = "Readers",
+        RouteValues = new Dictionary<string, object?> { ["keyword"] = Model.Keyword, ["status"] = Model.Status }
+    };
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Độc giả</h1>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg"></i> Thêm độc giả</a>
+</div>
+
+<form method="get" asp-action="Index" class="card card-body mb-3">
+    <div class="row g-2">
+        <div class="col-12 col-md-6">
+            <input type="text" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Tìm theo mã, họ tên, điện thoại, email..." />
+        </div>
+        <div class="col-6 col-md-3">
+            <select name="status" class="form-select">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Status))">Tất cả trạng thái</option>
+                <option value="active" selected="@(Model.Status == "active")">Còn hiệu lực</option>
+                <option value="locked" selected="@(Model.Status == "locked")">Bị khóa</option>
+                <option value="expired" selected="@(Model.Status == "expired")">Hết hạn thẻ</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-3 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm</button>
+        </div>
+    </div>
+</form>
+
+<div class="text-muted small mb-2">Tìm thấy <strong>@Model.TotalItems</strong> độc giả</div>
+
+@if (!Model.Readers.Any())
+{
+    <div class="alert alert-warning">Không có độc giả phù hợp.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white border">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Họ tên</th>
+                    <th>Điện thoại</th>
+                    <th>Hạn thẻ</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.Readers)
+                {
+                    <tr>
+                        <td>@r.ReaderCode</td>
+                        <td><a asp-action="Details" asp-route-id="@r.ReaderId" class="text-decoration-none">@r.FullName</a></td>
+                        <td>@r.Phone</td>
+                        <td>@r.CardExpiryDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (!r.IsActive)
+                            {
+                                <span class="badge text-bg-secondary">Bị khóa</span>
+                            }
+                            else if (r.CardExpiryDate.Date < today)
+                            {
+                                <span class="badge text-bg-warning">Hết hạn thẻ</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-success">Còn hiệu lực</span>
+                            }
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Details" asp-route-id="@r.ReaderId" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
+                            <a asp-action="Edit" asp-route-id="@r.ReaderId" class="btn btn-sm btn-outline-primary">Sửa</a>
+                            <form asp-action="ToggleStatus" asp-route-id="@r.ReaderId" method="post" class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc muốn đổi trạng thái thẻ?');">
+                                <button type="submit" class="btn btn-sm btn-outline-warning">@(r.IsActive ? "Khóa thẻ" : "Mở thẻ")</button>
+                            </form>
+                            <form asp-action="Delete" asp-route-id="@r.ReaderId" method="post" class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc muốn xóa độc giả này?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pager" model="pager" />
+}

@@ -1,0 +1,91 @@
+@model BookListViewModel
+@{
+    var isStaff = User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Librarian);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="text-muted small">@L["Books_Found", Model.TotalItems]</div>
+    <div class="small text-muted"><i class="bi bi-grid me-1"></i>@L["Books_Title"]</div>
+</div>
+@if (!Model.Books.Any())
+{
+    <div class="card border-0 shadow-sm"><div class="card-body text-center py-5">
+        <i class="bi bi-search display-5 text-muted"></i>
+        <h2 class="h5 mt-3">@L["Books_Empty"]</h2>
+        <p class="text-muted mb-0">@L["Books_SearchPh"]</p>
+    </div></div>
+}
+else
+{
+    <div class="row g-3 g-lg-4">
+    @foreach (var b in Model.Books)
+    {
+        var freeCopies = Model.AvailableToBorrow(b);
+        <div class="col-6 col-md-4 col-xl-3">
+            <article class="card catalog-book-card h-100">
+                <a asp-action="Details" asp-route-id="@b.BookId" class="catalog-cover-link" aria-label="@L["Btn_Details"]: @b.Title">
+                    <div class="catalog-cover">
+                        @if (!string.IsNullOrWhiteSpace(b.CoverImageUrl))
+                        {
+                            <img src="@b.CoverImageUrl" alt="@b.Title" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'" />
+                            <div class="catalog-cover-placeholder" style="display:none"><i class="bi bi-book-half"></i><span>@b.Title</span></div>
+                        }
+                        else
+                        {
+                            <div class="catalog-cover-placeholder"><i class="bi bi-book-half"></i><span>@b.Title</span></div>
+                        }
+                    </div>
+                </a>
+                <div class="card-body d-flex flex-column p-3">
+                    <div class="small text-muted mb-1">@b.Category?.Name</div>
+                    <h2 class="h6 catalog-title mb-1"><a asp-action="Details" asp-route-id="@b.BookId" class="text-decoration-none text-reset">@b.Title</a></h2>
+                    <div class="small text-muted catalog-author">@b.Author</div>
+                    <div class="d-flex flex-wrap gap-1 mt-3">
+                        @if (!b.IsActive)
+                        {
+                            <span class="badge text-bg-secondary">@L["Status_Inactive"]</span>
+                        }
+                        else if (freeCopies > 0)
+                        {
+                            <span class="badge text-bg-success">@L["Status_Available"]</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-warning">@L["Status_Out"]</span>
+                        }
+                        <span class="badge text-bg-light border text-dark">@freeCopies / @b.TotalCopies</span>
+                    </div>
+                    <div class="mt-auto pt-3 d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@b.BookId" class="btn btn-sm btn-primary flex-grow-1">@L["Btn_Details"]</a>
+                        @if (isStaff)
+                        {
+                            <a asp-action="Edit" asp-route-id="@b.BookId" class="btn btn-sm btn-outline-secondary" aria-label="@L["Btn_Edit"]"><i class="bi bi-pencil"></i></a>
+                            <form asp-action="Delete" asp-route-id="@b.BookId" method="post" onsubmit="return confirm('@L["Confirm_DeleteBook"]');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="@L["Btn_Delete"]"><i class="bi bi-trash"></i></button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </article>
+        </div>
+    }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        var start = Math.Max(1, Model.Page - 2);
+        var end = Math.Min(Model.TotalPages, Model.Page + 2);
+        var prev = Math.Max(1, Model.Page - 1);
+        var next = Math.Min(Model.TotalPages, Model.Page + 1);
+        <nav aria-label="Pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Page == 1 ? "disabled" : "")"><a class="page-link" data-page="@prev" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.CategoryId" asp-route-availability="@Model.Availability" asp-route-sort="@Model.Sort" asp-route-page="@prev" aria-label="Previous">&laquo;</a></li>
+                @for (var p = start; p <= end; p++)
+                {
+                    <li class="page-item @(p == Model.Page ? "active" : "")"><a class="page-link" data-page="@p" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.CategoryId" asp-route-availability="@Model.Availability" asp-route-sort="@Model.Sort" asp-route-page="@p">@p</a></li>
+                }
+                <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")"><a class="page-link" data-page="@next" asp-action="Index" asp-route-keyword="@Model.Keyword" asp-route-categoryId="@Model.CategoryId" asp-route-availability="@Model.Availability" asp-route-sort="@Model.Sort" asp-route-page="@next" aria-label="Next">&raquo;</a></li>
+            </ul>
+        </nav>
+        <div class="text-center text-muted small">@L["Page_Info", Model.Page, Model.TotalPages]</div>
+    }
+}

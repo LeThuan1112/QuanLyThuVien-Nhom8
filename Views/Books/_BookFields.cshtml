@@ -1,0 +1,79 @@
+@model Book
+@{
+    var cats = (IEnumerable<SelectListItem>)ViewBag.Categories;
+}
+<div class="row g-3">
+    <div class="col-md-4">
+        <label asp-for="BookCode" class="form-label"></label>
+        @if (string.Equals(ViewContext.RouteData.Values["action"]?.ToString(), "Create", StringComparison.OrdinalIgnoreCase))
+        {
+            var bookCodePreview = ViewBag.BookCodePreview as string ?? Model.BookCode;
+            <input type="text" id="BookCode" value="@bookCodePreview" class="form-control" readonly autocomplete="off" aria-describedby="bookCodeHelp" />
+            <div id="bookCodeHelp" class="form-text">Mã sách được hệ thống tự cấp theo dãy S001, S002... Mã đang hiển thị là mã dự kiến.</div>
+        }
+        else
+        {
+            <input asp-for="BookCode" class="form-control" />
+            <span asp-validation-for="BookCode" class="text-danger"></span>
+        }
+    </div>
+    <div class="col-md-8">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Author" class="form-label"></label>
+        <input asp-for="Author" class="form-control" />
+        <span asp-validation-for="Author" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="CategoryId" class="form-label"></label>
+        <select asp-for="CategoryId" asp-items="cats" class="form-select">
+            <option value="">-- Chọn thể loại --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Publisher" class="form-label"></label>
+        <input asp-for="Publisher" class="form-control" />
+        <span asp-validation-for="Publisher" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="PublishYear" class="form-label"></label>
+        <input asp-for="PublishYear" class="form-control" />
+        <span asp-validation-for="PublishYear" class="text-danger"></span>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="TotalCopies" class="form-label"></label>
+        <input asp-for="TotalCopies" class="form-control" />
+        <span asp-validation-for="TotalCopies" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="ISBN" class="form-label"></label>
+        <input asp-for="ISBN" class="form-control" />
+        <span asp-validation-for="ISBN" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="ShelfLocation" class="form-label"></label>
+        <input asp-for="ShelfLocation" class="form-control" />
+        <span asp-validation-for="ShelfLocation" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="CoverImageUrl" class="form-label"></label>
+        <input asp-for="CoverImageUrl" class="form-control" placeholder="https://... hoặc /images/covers/sach.jpg" />
+        <div class="form-text">Dùng URL HTTPS hoặc file ảnh đặt trong wwwroot. Có thể để trống.</div>
+        <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <div class="form-check">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label"></label>
+        </div>
+    </div>
+</div>

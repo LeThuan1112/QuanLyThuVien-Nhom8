@@ -1,0 +1,79 @@
+@model MyLoansViewModel
+@{
+    ViewData["Title"] = "Phiếu mượn của tôi";
+    var now = DateTime.Now;
+    var maxRenewals = ViewBag.MaxRenewals is int max ? max : 0;
+    var renewDays = ViewBag.RenewDays is int days ? days : 7;
+    var renewalFeePerBook = ViewBag.RenewalFeePerBook is int fee ? fee : 2000;
+    var shownRenewalFeeForLoans = new System.Collections.Generic.HashSet<int>();
+    var shownRenewButtonForLoans = new System.Collections.Generic.HashSet<int>();
+}
+<h1 class="h3 mb-3">Phiếu mượn của tôi</h1>
+@if (Model.Reader == null)
+{
+    <div class="alert alert-warning">
+        Tài khoản của bạn chưa được liên kết với hồ sơ độc giả. Vui lòng liên hệ thủ thư.
+    </div>
+}
+else
+{
+    <p class="text-muted">Độc giả: <strong>@Model.Reader.FullName</strong> (@Model.Reader.ReaderCode)</p>
+    @if (!Model.Items.Any())
+    {
+        <div class="alert alert-info">Bạn chưa mượn cuốn sách nào.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Phiếu</th>
+                        <th>Sách</th>
+                        <th>Ngày mượn</th>
+                        <th>Hạn trả</th>
+                        <th>Ngày trả</th>
+                        <th class="text-end">Phí phạt</th>
+                        <th class="text-end">Phí gia hạn</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model.Items)
+                    {
+                        var loan = d.Loan!;
+                        var status = LoanStatus.Of(d.ReturnDate, loan.DueDate, now);
+                        var outstandingCount = Model.Items.Count(x => x.LoanId == d.LoanId && x.ReturnDate == null);
+                        var canRenew = outstandingCount > 0 && maxRenewals > 0 && loan.RenewCount < maxRenewals && loan.DueDate.Date >= now.Date;
+                        var renewalFeeForNextRenewal = (decimal)renewalFeePerBook * outstandingCount;
+                        var renewalFeeForNextRenewalText = renewalFeeForNextRenewal.ToString("N0");
+                        var showRenewButton = shownRenewButtonForLoans.Add(d.LoanId) && canRenew;
+                        var isFirstRowForLoan = shownRenewalFeeForLoans.Add(d.LoanId);
+                        var renewalFeeForLoan = loan.Renewals.Sum(r => r.FeeAmount);
+                        <tr>
+                            <td>#@d.LoanId</td>
+                            <td>@d.Book?.Title</td>
+                            <td>@loan.LoanDate.ToString("dd/MM/yyyy")</td>
+                            <td>@loan.DueDate.ToString("dd/MM/yyyy")</td>
+                            <td>@(d.ReturnDate?.ToString("dd/MM/yyyy"))</td>
+                            <td class="text-end">@(d.FineAmount > 0 ? d.FineAmount.ToString("N0") + " đ" : "-")</td>
+                            <td class="text-end">@(isFirstRowForLoan && renewalFeeForLoan > 0 ? renewalFeeForLoan.ToString("N0") + " đ" : "-")</td>
+                            <td><span class="badge @LoanStatus.BadgeClass(status)">@status</span></td>
+                            <td class="text-end">
+                                @if (showRenewButton)
+                                {
+                                    <form asp-action="Renew" asp-route-id="@d.LoanId" method="post"
+                                          onsubmit="return confirm('Gia hạn thêm @renewDays ngày và ghi nhận phí @renewalFeeForNextRenewalText đ?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Gia hạn +@renewDays ngày · @renewalFeeForNextRenewalText đ</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="text-muted small mt-2">Mỗi phiếu được gia hạn tối đa @maxRenewals lần, chỉ gia hạn khi chưa quá hạn. Phí gia hạn hiện tại: @renewalFeePerBook.ToString("N0") đ/cuốn/lần. Phí hiển thị là phí phát sinh, chưa xác nhận đã thu tiền.</div>
+    }
+}

@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>Thư viện</value>
+  </data>
+  <data name="Nav_Home" xml:space="preserve">
+    <value>Trang chủ</value>
+  </data>
+  <data name="Nav_Books" xml:space="preserve">
+    <value>Sách</value>
+  </data>
+  <data name="Nav_Categories" xml:space="preserve">
+    <value>Thể loại</value>
+  </data>
+  <data name="Nav_Readers" xml:space="preserve">
+    <value>Độc giả</value>
+  </data>
+  <data name="Nav_Borrow" xml:space="preserve">
+    <value>Mượn sách</value>
+  </data>
+  <data name="Nav_Loans" xml:space="preserve">
+    <value>Phiếu mượn</value>
+  </data>
+  <data name="Nav_Overdue" xml:space="preserve">
+    <value>Quá hạn</value>
+  </data>
+  <data name="Nav_Dashboard" xml:space="preserve">
+    <value>Bảng điều khiển</value>
+  </data>
+  <data name="Nav_MyPage" xml:space="preserve">
+    <value>Trang của tôi</value>
+  </data>
+  <data name="Nav_MyLoans" xml:space="preserve">
+    <value>Phiếu mượn của tôi</value>
+  </data>
+  <data name="Nav_Login" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Nav_Logout" xml:space="preserve">
+    <value>Đăng xuất</value>
+  </data>
+  <data name="Footer_Text" xml:space="preserve">
+    <value>© {0} Hệ thống quản lý thư viện - Bài tập lớn Lập trình Web</value>
+  </data>
+  <data name="Home_Title" xml:space="preserve">
+    <value>Hệ thống quản lý thư viện</value>
+  </data>
+  <data name="Home_Subtitle" xml:space="preserve">
+    <value>Quản lý sách, độc giả, mượn - trả và theo dõi sách quá hạn.</value>
+  </data>
+  <data name="Home_Login" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Home_Enter" xml:space="preserve">
+    <value>Vào trang làm việc</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Login_Username" xml:space="preserve">
+    <value>Tên đăng nhập</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Mật khẩu</value>
+  </data>
+  <data name="Login_Remember" xml:space="preserve">
+    <value>Ghi nhớ đăng nhập</value>
+  </data>
+  <data name="Login_Submit" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="Dash_Title" xml:space="preserve">
+    <value>Bảng điều khiển</value>
+  </data>
+  <data name="Dash_BookTitles" xml:space="preserve">
+    <value>Số đầu sách</value>
+  </data>
+  <data name="Dash_TotalCopies" xml:space="preserve">
+    <value>Tổng số bản sách</value>
+  </data>
+  <data name="Dash_Available" xml:space="preserve">
+    <value>Số bản có thể cho mượn</value>
+  </data>
+  <data name="Dash_Readers" xml:space="preserve">
+    <value>Số độc giả</value>
+  </data>
+  <data name="Dash_Borrowing" xml:space="preserve">
+    <value>Sách đang được mượn</value>
+  </data>
+  <data name="Dash_Overdue" xml:space="preserve">
+    <value>Sách quá hạn</value>
+  </data>
+  <data name="Books_Title" xml:space="preserve">
+    <value>Danh sách sách</value>
+  </data>
+  <data name="Books_Add" xml:space="preserve">
+    <value>Thêm sách</value>
+  </data>
+  <data name="Books_SearchPh" xml:space="preserve">
+    <value>Tìm theo tên sách, mã sách, tác giả...</value>
+  </data>
+  <data name="Books_AllCategories" xml:space="preserve">
+    <value>Tất cả thể loại</value>
+  </data>
+  <data name="Books_AllStatus" xml:space="preserve">
+    <value>Tất cả tình trạng</value>
+  </data>
+  <data name="Books_StatusAvailable" xml:space="preserve">
+    <value>Còn sách</value>
+  </data>
+  <data name="Books_StatusUnavailable" xml:space="preserve">
+    <value>Hết / ngừng lưu hành</value>
+  </data>
+  <data name="Sort_TitleAsc" xml:space="preserve">
+    <value>Tên A → Z</value>
+  </data>
+  <data name="Sort_TitleDesc" xml:space="preserve">
+    <value>Tên Z → A</value>
+  </data>
+  <data name="Sort_CodeAsc" xml:space="preserve">
+    <value>Mã sách ↑</value>
+  </data>
+  <data name="Sort_CodeDesc" xml:space="preserve">
+    <value>Mã sách ↓</value>
+  </data>
+  <data name="Sort_YearDesc" xml:space="preserve">
+    <value>Năm mới nhất</value>
+  </data>
+  <data name="Sort_YearAsc" xml:space="preserve">
+    <value>Năm cũ nhất</value>
+  </data>
+  <data name="Sort_AvailDesc" xml:space="preserve">
+    <value>Còn nhiều bản nhất</value>
+  </data>
+  <data name="Btn_Search" xml:space="preserve">
+    <value>Tìm</value>
+  </data>
+  <data name="Books_Found" xml:space="preserve">
+    <value>Tìm thấy {0} đầu sách</value>
+  </data>
+  <data name="Books_Empty" xml:space="preserve">
+    <value>Không có sách phù hợp với điều kiện tìm kiếm.</value>
+  </data>
+  <data name="Col_Code" xml:space="preserve">
+    <value>Mã</value>
+  </data>
+  <data name="Col_Title" xml:space="preserve">
+    <value>Tên sách</value>
+  </data>
+  <data name="Col_Author" xml:space="preserve">
+    <value>Tác giả</value>
+  </data>
+  <data name="Col_Category" xml:space="preserve">
+    <value>Thể loại</value>
+  </data>
+  <data name="Col_Copies" xml:space="preserve">
+    <value>Còn / Tổng</value>
+  </data>
+  <data name="Col_Status" xml:space="preserve">
+    <value>Tình trạng</value>
+  </data>
+  <data name="Col_Actions" xml:space="preserve">
+    <value>Thao tác</value>
+  </data>
+  <data name="Status_Available" xml:space="preserve">
+    <value>Còn sách</value>
+  </data>
+  <data name="Status_Out" xml:space="preserve">
+    <value>Hết sách</value>
+  </data>
+  <data name="Status_Inactive" xml:space="preserve">
+    <value>Ngừng lưu hành</value>
+  </data>
+  <data name="Btn_Details" xml:space="preserve">
+    <value>Chi tiết</value>
+  </data>
+  <data name="Btn_Edit" xml:space="preserve">
+    <value>Sửa</value>
+  </data>
+  <data name="Btn_Delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="Confirm_DeleteBook" xml:space="preserve">
+    <value>Bạn có chắc muốn xóa sách này?</value>
+  </data>
+  <data name="Page_Info" xml:space="preserve">
+    <value>Trang {0} / {1}</value>
+  </data>
+  <data name="Nav_Reports" xml:space="preserve">
+    <value>Báo cáo</value>
+  </data>
+  <data name="Nav_Users" xml:space="preserve">
+    <value>Tài khoản</value>
+  </data>
+  <data name="Nav_ChangePassword" xml:space="preserve">
+    <value>Đổi mật khẩu</value>
+  </data>
+  <data name="Nav_GroupOverview" xml:space="preserve">
+    <value>Tổng quan</value>
+  </data>
+  <data name="Nav_GroupOps" xml:space="preserve">
+    <value>Nghiệp vụ</value>
+  </data>
+  <data name="Nav_GroupCatalog" xml:space="preserve">
+    <value>Danh mục</value>
+  </data>
+  <data name="Nav_GroupSystem" xml:space="preserve">
+    <value>Hệ thống</value>
+  </data>
+  <data name="Hero_Title" xml:space="preserve">
+    <value>Khám phá kho sách của thư viện</value>
+  </data>
+  <data name="Hero_Sub" xml:space="preserve">
+    <value>Tra cứu sách, xem tình trạng còn sách và theo dõi phiếu mượn của bạn mọi lúc.</value>
+  </data>
+  <data name="Hero_SearchPh" xml:space="preserve">
+    <value>Nhập tên sách, mã sách hoặc tác giả...</value>
+  </data>
+  <data name="Hero_SearchBtn" xml:space="preserve">
+    <value>Tìm sách</value>
+  </data>
+  <data name="Home_StatBooks" xml:space="preserve">
+    <value>Đầu sách</value>
+  </data>
+  <data name="Home_StatAvail" xml:space="preserve">
+    <value>Bản có thể mượn</value>
+  </data>
+  <data name="Home_StatReaders" xml:space="preserve">
+    <value>Độc giả</value>
+  </data>
+  <data name="Home_Categories" xml:space="preserve">
+    <value>Thể loại sách</value>
+  </data>
+  <data name="Home_Latest" xml:space="preserve">
+    <value>Sách mới</value>
+  </data>
+  <data name="Home_ViewAll" xml:space="preserve">
+    <value>Xem tất cả</value>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Chào mừng trở lại</value>
+  </data>
+  <data name="Login_Sub" xml:space="preserve">
+    <value>Đăng nhập để tiếp tục sử dụng hệ thống</value>
+  </data>
+  <data name="Dash_Chart14" xml:space="preserve">
+    <value>Mượn / trả trong 14 ngày gần đây</value>
+  </data>
+  <data name="Dash_ByCategory" xml:space="preserve">
+    <value>Sách theo thể loại</value>
+  </data>
+  <data name="Dash_TopBooks" xml:space="preserve">
+    <value>Sách được mượn nhiều</value>
+  </data>
+  <data name="Dash_RecentLoans" xml:space="preserve">
+    <value>Phiếu mượn gần đây</value>
+  </data>
+  <data name="Dash_OverdueAlert" xml:space="preserve">
+    <value>Cảnh báo quá hạn</value>
+  </data>
+  <data name="Dash_Borrowed" xml:space="preserve">
+    <value>Mượn</value>
+  </data>
+  <data name="Dash_Returned" xml:space="preserve">
+    <value>Trả</value>
+  </data>
+  <data name="Dash_NoData" xml:space="preserve">
+    <value>Chưa có dữ liệu</value>
+  </data>
+  <data name="Dash_NoOverdue" xml:space="preserve">
+    <value>Không có sách quá hạn</value>
+  </data>
+  <data name="Nav_GroupAdmin" xml:space="preserve">
+    <value>Quản trị</value>
+  </data>
+  <data name="Nav_AuditLog" xml:space="preserve">
+    <value>Nhật ký hoạt động</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>Cài đặt hệ thống</value>
+  </data>
+  <data name="Home_PopularTitle" xml:space="preserve"><value>Sách được mượn nhiều</value></data>
+  <data name="Home_PopularSubtitle" xml:space="preserve"><value>Xếp hạng dựa trên lịch sử mượn thực tế.</value></data>
+  <data name="Home_PopularEmpty" xml:space="preserve"><value>Chưa có dữ liệu mượn để xếp hạng.</value></data>
+  <data name="Book_BackCatalog" xml:space="preserve"><value>Quay lại danh mục</value></data>
+  <data name="Book_DetailHeading" xml:space="preserve"><value>Thông tin sách</value></data>
+  <data name="Book_Author" xml:space="preserve"><value>Tác giả</value></data>
+  <data name="Book_Category" xml:space="preserve"><value>Thể loại</value></data>
+  <data name="Book_Publisher" xml:space="preserve"><value>Nhà xuất bản</value></data>
+  <data name="Book_Year" xml:space="preserve"><value>Năm xuất bản</value></data>
+  <data name="Book_ISBN" xml:space="preserve"><value>ISBN</value></data>
+  <data name="Book_Shelf" xml:space="preserve"><value>Vị trí kệ</value></data>
+  <data name="Book_Copies" xml:space="preserve"><value>Số bản có thể mượn / tổng số bản</value></data>
+  <data name="Book_Status" xml:space="preserve"><value>Tình trạng</value></data>
+  <data name="Book_Description" xml:space="preserve"><value>Giới thiệu sách</value></data>
+  <data name="Book_Reserve" xml:space="preserve"><value>Đặt trước cuốn sách này</value></data>
+  <data name="Book_ReserveLogin" xml:space="preserve"><value>Đăng nhập để đặt trước</value></data>
+  <data name="Book_ReserveHelp" xml:space="preserve"><value>Khi sách được trả, hệ thống sẽ xét hàng chờ theo thứ tự yêu cầu. Bạn có 3 ngày để nhận sách sau khi được thông báo sẵn sàng.</value></data>
+  <data name="Book_CoverMissing" xml:space="preserve"><value>Chưa có ảnh bìa</value></data>
+  <data name="Book_YearUnknown" xml:space="preserve"><value>Chưa cập nhật</value></data>
+  <data name="Reservation_MyTitle" xml:space="preserve"><value>Yêu cầu đặt trước của tôi</value></data>
+  <data name="Reservation_MySubtitle" xml:space="preserve"><value>Theo dõi vị trí hàng chờ và thời hạn nhận sách.</value></data>
+  <data name="Reservation_EmptyTitle" xml:space="preserve"><value>Bạn chưa có yêu cầu đặt trước</value></data>
+  <data name="Reservation_EmptyBody" xml:space="preserve"><value>Khi sách hết bản, bạn có thể đăng ký chờ nhận sách ở trang chi tiết sách.</value></data>
+  <data name="Reservation_Browse" xml:space="preserve"><value>Tra cứu sách</value></data>
+  <data name="Reservation_RequestedAt" xml:space="preserve"><value>Ngày yêu cầu</value></data>
+  <data name="Reservation_Status" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Reservation_ExpiresAt" xml:space="preserve"><value>Hạn nhận sách</value></data>
+  <data name="Reservation_Ready" xml:space="preserve"><value>Đã sẵn sàng nhận</value></data>
+  <data name="Reservation_Waiting" xml:space="preserve"><value>Đang chờ</value></data>
+  <data name="Reservation_Fulfilled" xml:space="preserve"><value>Đã mượn</value></data>
+  <data name="Reservation_Cancelled" xml:space="preserve"><value>Đã hủy</value></data>
+  <data name="Reservation_Expired" xml:space="preserve"><value>Quá hạn nhận</value></data>
+  <data name="Reservation_ConfirmCancel" xml:space="preserve"><value>Bạn chắc chắn muốn hủy yêu cầu đặt trước này?</value></data>
+  <data name="Reservation_Cancel" xml:space="preserve"><value>Hủy yêu cầu</value></data>
+  <data name="Reservation_Rules" xml:space="preserve"><value>Yêu cầu chờ được xử lý theo thứ tự đăng ký. Khi sách sẵn sàng, bạn có 3 ngày để nhận; nếu quá hạn, lượt chờ sẽ được chuyển cho người tiếp theo.</value></data>
+  <data name="Reservation_QueueTitle" xml:space="preserve"><value>Hàng chờ đặt trước</value></data>
+  <data name="Reservation_QueueSubtitle" xml:space="preserve"><value>Các yêu cầu đang chờ hoặc đã có sách sẵn sàng nhận.</value></data>
+  <data name="Reservation_QueueEmpty" xml:space="preserve"><value>Hiện không có yêu cầu đặt trước đang chờ xử lý.</value></data>
+  <data name="Reservation_QueuePosition" xml:space="preserve"><value>Vị trí của bạn: {0} trong hàng chờ</value></data>
+  <data name="Reservation_Reader" xml:space="preserve"><value>Độc giả</value></data>
+  <data name="Nav_Reservations" xml:space="preserve"><value>Hàng chờ đặt trước</value></data>
+  <data name="Nav_MyReservations" xml:space="preserve"><value>Đặt trước của tôi</value></data>
+<data name="Books_AjaxError" xml:space="preserve"><value>Không thể tải danh sách sách. Vui lòng thử lại.</value></data></root>

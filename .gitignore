@@ -1,0 +1,31 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+appsettings.Development.json
+tests/**/bin/
+tests/**/obj/
+*.bak
+*.bacpac
+.env
+*.secrets.json
+
+# Build output
+bin/
+obj/
+.vs/
+TestResults/
+ThuVien_Source_Nhom8.zip
+*.bak
+/ReadMe.txt
+
+# Local notes and temporary patch files
+Hướng dẫn sử dụng.txt
+PATCH_README.txt
+README_PATCH.md
+Apply-AutoCodes.ps1
+Apply-BookCatalogPatch.ps1
+Fix-BookListViewModelNamespace.ps1
+
+/H*

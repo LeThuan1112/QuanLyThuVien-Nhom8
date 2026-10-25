@@ -1,0 +1,80 @@
+@model LoanListViewModel
+@{
+    ViewData["Title"] = "Phiếu mượn";
+    var now = DateTime.Now;
+    var pager = new PagerViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Action = "Index",
+        Controller = "Loans",
+        RouteValues = new Dictionary<string, object?> { ["keyword"] = Model.Keyword, ["status"] = Model.Status }
+    };
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Phiếu mượn / lịch sử giao dịch</h1>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-plus-lg"></i> Lập phiếu mượn</a>
+</div>
+
+<form method="get" asp-action="Index" class="card card-body mb-3">
+    <div class="row g-2">
+        <div class="col-12 col-md-6">
+            <input type="text" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Tìm theo mã phiếu, mã độc giả, họ tên..." />
+        </div>
+        <div class="col-6 col-md-3">
+            <select name="status" class="form-select">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Status))">Tất cả trạng thái</option>
+                <option value="borrowing" selected="@(Model.Status == "borrowing")">Còn sách chưa trả</option>
+                <option value="overdue" selected="@(Model.Status == "overdue")">Quá hạn</option>
+                <option value="returned" selected="@(Model.Status == "returned")">Đã trả hết</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-3 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm</button>
+        </div>
+    </div>
+</form>
+
+<div class="text-muted small mb-2">Tìm thấy <strong>@Model.TotalItems</strong> phiếu</div>
+
+@if (!Model.Loans.Any())
+{
+    <div class="alert alert-warning">Không có phiếu mượn phù hợp.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white border">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã phiếu</th>
+                    <th>Độc giả</th>
+                    <th>Ngày mượn</th>
+                    <th>Hạn trả</th>
+                    <th class="text-center">Số cuốn</th>
+                    <th class="text-center">Chưa trả</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model.Loans)
+                {
+                    var unreturned = l.Details.Count(d => d.ReturnDate == null);
+                    var status = unreturned == 0 ? LoanStatus.Returned : (l.DueDate.Date < DateTime.Today ? LoanStatus.Overdue : LoanStatus.Borrowing);
+                    <tr>
+                        <td>#@l.LoanId</td>
+                        <td>@l.Reader?.ReaderCode - @l.Reader?.FullName</td>
+                        <td>@l.LoanDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@l.DueDate.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">@l.Details.Count</td>
+                        <td class="text-center">@unreturned</td>
+                        <td><span class="badge @LoanStatus.BadgeClass(status)">@status</span></td>
+                        <td class="text-end"><a asp-action="Details" asp-route-id="@l.LoanId" class="btn btn-sm btn-outline-primary">Chi tiết</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_Pager" model="pager" />
+}

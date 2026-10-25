@@ -1,0 +1,17 @@
+@model Book
+@{
+    ViewData["Title"] = "Thêm sách";
+}
+<h1 class="h3 mb-3">Thêm sách</h1>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+            <partial name="_BookFields" model="Model" />
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

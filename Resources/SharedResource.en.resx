@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Name" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="Nav_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Nav_Books" xml:space="preserve">
+    <value>Books</value>
+  </data>
+  <data name="Nav_Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Nav_Readers" xml:space="preserve">
+    <value>Readers</value>
+  </data>
+  <data name="Nav_Borrow" xml:space="preserve">
+    <value>Borrow</value>
+  </data>
+  <data name="Nav_Loans" xml:space="preserve">
+    <value>Loans</value>
+  </data>
+  <data name="Nav_Overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="Nav_Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Nav_MyPage" xml:space="preserve">
+    <value>My page</value>
+  </data>
+  <data name="Nav_MyLoans" xml:space="preserve">
+    <value>My loans</value>
+  </data>
+  <data name="Nav_Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Nav_Logout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="Footer_Text" xml:space="preserve">
+    <value>© {0} Library management system - Web Programming assignment</value>
+  </data>
+  <data name="Home_Title" xml:space="preserve">
+    <value>Library Management System</value>
+  </data>
+  <data name="Home_Subtitle" xml:space="preserve">
+    <value>Manage books, readers, borrowing, returns and overdue items.</value>
+  </data>
+  <data name="Home_Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Home_Enter" xml:space="preserve">
+    <value>Go to workspace</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Login_Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Login_Remember" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="Login_Submit" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Dash_Title" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Dash_BookTitles" xml:space="preserve">
+    <value>Book titles</value>
+  </data>
+  <data name="Dash_TotalCopies" xml:space="preserve">
+    <value>Total copies</value>
+  </data>
+  <data name="Dash_Available" xml:space="preserve">
+    <value>Copies available</value>
+  </data>
+  <data name="Dash_Readers" xml:space="preserve">
+    <value>Readers</value>
+  </data>
+  <data name="Dash_Borrowing" xml:space="preserve">
+    <value>Books on loan</value>
+  </data>
+  <data name="Dash_Overdue" xml:space="preserve">
+    <value>Overdue books</value>
+  </data>
+  <data name="Books_Title" xml:space="preserve">
+    <value>Book list</value>
+  </data>
+  <data name="Books_Add" xml:space="preserve">
+    <value>Add book</value>
+  </data>
+  <data name="Books_SearchPh" xml:space="preserve">
+    <value>Search by title, code or author...</value>
+  </data>
+  <data name="Books_AllCategories" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="Books_AllStatus" xml:space="preserve">
+    <value>All availability</value>
+  </data>
+  <data name="Books_StatusAvailable" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="Books_StatusUnavailable" xml:space="preserve">
+    <value>Out of stock / withdrawn</value>
+  </data>
+  <data name="Sort_TitleAsc" xml:space="preserve">
+    <value>Title A → Z</value>
+  </data>
+  <data name="Sort_TitleDesc" xml:space="preserve">
+    <value>Title Z → A</value>
+  </data>
+  <data name="Sort_CodeAsc" xml:space="preserve">
+    <value>Code ↑</value>
+  </data>
+  <data name="Sort_CodeDesc" xml:space="preserve">
+    <value>Code ↓</value>
+  </data>
+  <data name="Sort_YearDesc" xml:space="preserve">
+    <value>Newest year</value>
+  </data>
+  <data name="Sort_YearAsc" xml:space="preserve">
+    <value>Oldest year</value>
+  </data>
+  <data name="Sort_AvailDesc" xml:space="preserve">
+    <value>Most copies available</value>
+  </data>
+  <data name="Btn_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Books_Found" xml:space="preserve">
+    <value>{0} books found</value>
+  </data>
+  <data name="Books_Empty" xml:space="preserve">
+    <value>No books match your search.</value>
+  </data>
+  <data name="Col_Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Col_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Col_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="Col_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Col_Copies" xml:space="preserve">
+    <value>Available / Total</value>
+  </data>
+  <data name="Col_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Col_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Status_Available" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="Status_Out" xml:space="preserve">
+    <value>Out of stock</value>
+  </data>
+  <data name="Status_Inactive" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="Btn_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Btn_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Btn_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Confirm_DeleteBook" xml:space="preserve">
+    <value>Are you sure you want to delete this book?</value>
+  </data>
+  <data name="Page_Info" xml:space="preserve">
+    <value>Page {0} of {1}</value>
+  </data>
+  <data name="Nav_Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="Nav_Users" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="Nav_ChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="Nav_GroupOverview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Nav_GroupOps" xml:space="preserve">
+    <value>Operations</value>
+  </data>
+  <data name="Nav_GroupCatalog" xml:space="preserve">
+    <value>Catalog</value>
+  </data>
+  <data name="Nav_GroupSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="Hero_Title" xml:space="preserve">
+    <value>Explore our library collection</value>
+  </data>
+  <data name="Hero_Sub" xml:space="preserve">
+    <value>Search books, check availability and track your loans anytime.</value>
+  </data>
+  <data name="Hero_SearchPh" xml:space="preserve">
+    <value>Enter a title, book code or author...</value>
+  </data>
+  <data name="Hero_SearchBtn" xml:space="preserve">
+    <value>Find books</value>
+  </data>
+  <data name="Home_StatBooks" xml:space="preserve">
+    <value>Book titles</value>
+  </data>
+  <data name="Home_StatAvail" xml:space="preserve">
+    <value>Copies available</value>
+  </data>
+  <data name="Home_StatReaders" xml:space="preserve">
+    <value>Readers</value>
+  </data>
+  <data name="Home_Categories" xml:space="preserve">
+    <value>Book categories</value>
+  </data>
+  <data name="Home_Latest" xml:space="preserve">
+    <value>New arrivals</value>
+  </data>
+  <data name="Home_ViewAll" xml:space="preserve">
+    <value>View all</value>
+  </data>
+  <data name="Login_Welcome" xml:space="preserve">
+    <value>Welcome back</value>
+  </data>
+  <data name="Login_Sub" xml:space="preserve">
+    <value>Sign in to continue</value>
+  </data>
+  <data name="Dash_Chart14" xml:space="preserve">
+    <value>Borrowed / returned in the last 14 days</value>
+  </data>
+  <data name="Dash_ByCategory" xml:space="preserve">
+    <value>Books by category</value>
+  </data>
+  <data name="Dash_TopBooks" xml:space="preserve">
+    <value>Most borrowed books</value>
+  </data>
+  <data name="Dash_RecentLoans" xml:space="preserve">
+    <value>Recent loans</value>
+  </data>
+  <data name="Dash_OverdueAlert" xml:space="preserve">
+    <value>Overdue alerts</value>
+  </data>
+  <data name="Dash_Borrowed" xml:space="preserve">
+    <value>Borrowed</value>
+  </data>
+  <data name="Dash_Returned" xml:space="preserve">
+    <value>Returned</value>
+  </data>
+  <data name="Dash_NoData" xml:space="preserve">
+    <value>No data yet</value>
+  </data>
+  <data name="Dash_NoOverdue" xml:space="preserve">
+    <value>No overdue books</value>
+  </data>
+  <data name="Nav_GroupAdmin" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="Nav_AuditLog" xml:space="preserve">
+    <value>Activity log</value>
+  </data>
+  <data name="Nav_Settings" xml:space="preserve">
+    <value>System settings</value>
+  </data>
+  <data name="Home_PopularTitle" xml:space="preserve"><value>Popular books</value></data>
+  <data name="Home_PopularSubtitle" xml:space="preserve"><value>Ranked from real loan history.</value></data>
+  <data name="Home_PopularEmpty" xml:space="preserve"><value>No loan history is available for ranking yet.</value></data>
+  <data name="Book_BackCatalog" xml:space="preserve"><value>Back to catalog</value></data>
+  <data name="Book_DetailHeading" xml:space="preserve"><value>Book information</value></data>
+  <data name="Book_Author" xml:space="preserve"><value>Author</value></data>
+  <data name="Book_Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Book_Publisher" xml:space="preserve"><value>Publisher</value></data>
+  <data name="Book_Year" xml:space="preserve"><value>Publication year</value></data>
+  <data name="Book_ISBN" xml:space="preserve"><value>ISBN</value></data>
+  <data name="Book_Shelf" xml:space="preserve"><value>Shelf location</value></data>
+  <data name="Book_Copies" xml:space="preserve"><value>Available copies / total copies</value></data>
+  <data name="Book_Status" xml:space="preserve"><value>Availability</value></data>
+  <data name="Book_Description" xml:space="preserve"><value>About this book</value></data>
+  <data name="Book_Reserve" xml:space="preserve"><value>Reserve this book</value></data>
+  <data name="Book_ReserveLogin" xml:space="preserve"><value>Sign in to reserve</value></data>
+  <data name="Book_ReserveHelp" xml:space="preserve"><value>When a copy is returned, the waiting list is processed in order. You have 3 days to collect a book once it becomes available.</value></data>
+  <data name="Book_CoverMissing" xml:space="preserve"><value>No cover image</value></data>
+  <data name="Book_YearUnknown" xml:space="preserve"><value>Not provided</value></data>
+  <data name="Reservation_MyTitle" xml:space="preserve"><value>My reservations</value></data>
+  <data name="Reservation_MySubtitle" xml:space="preserve"><value>Track your queue and collection deadline.</value></data>
+  <data name="Reservation_EmptyTitle" xml:space="preserve"><value>You have no reservations</value></data>
+  <data name="Reservation_EmptyBody" xml:space="preserve"><value>When a book is out of stock, you can join its waiting list from the book details page.</value></data>
+  <data name="Reservation_Browse" xml:space="preserve"><value>Browse books</value></data>
+  <data name="Reservation_RequestedAt" xml:space="preserve"><value>Requested at</value></data>
+  <data name="Reservation_Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Reservation_ExpiresAt" xml:space="preserve"><value>Collection deadline</value></data>
+  <data name="Reservation_Ready" xml:space="preserve"><value>Ready for collection</value></data>
+  <data name="Reservation_Waiting" xml:space="preserve"><value>Waiting</value></data>
+  <data name="Reservation_Fulfilled" xml:space="preserve"><value>Borrowed</value></data>
+  <data name="Reservation_Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Reservation_Expired" xml:space="preserve"><value>Expired</value></data>
+  <data name="Reservation_ConfirmCancel" xml:space="preserve"><value>Are you sure you want to cancel this reservation?</value></data>
+  <data name="Reservation_Cancel" xml:space="preserve"><value>Cancel request</value></data>
+  <data name="Reservation_Rules" xml:space="preserve"><value>Requests are processed in order. Once a copy is ready, you have 3 days to collect it; otherwise the next person receives the offer.</value></data>
+  <data name="Reservation_QueueTitle" xml:space="preserve"><value>Reservation queue</value></data>
+  <data name="Reservation_QueueSubtitle" xml:space="preserve"><value>Requests waiting for books or ready for collection.</value></data>
+  <data name="Reservation_QueueEmpty" xml:space="preserve"><value>There are no active reservation requests.</value></data>
+  <data name="Reservation_QueuePosition" xml:space="preserve"><value>Your position: {0} in the waiting queue</value></data>
+  <data name="Reservation_Reader" xml:space="preserve"><value>Reader</value></data>
+  <data name="Nav_Reservations" xml:space="preserve"><value>Reservation queue</value></data>
+  <data name="Nav_MyReservations" xml:space="preserve"><value>My reservations</value></data>
+<data name="Books_AjaxError" xml:space="preserve"><value>Could not load the book list. Please try again.</value></data></root>

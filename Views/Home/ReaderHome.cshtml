@@ -1,0 +1,81 @@
+@model ReaderHomeViewModel
+@{
+    ViewData["Title"] = L["Nav_MyPage"].Value;
+    var today = DateTime.Today;
+}
+@if (Model.Reader == null)
+{
+    <div class="alert alert-warning">
+        Tài khoản của bạn chưa được liên kết với hồ sơ độc giả. Vui lòng liên hệ thủ thư để được hỗ trợ.
+    </div>
+}
+else
+{
+    <div class="hero mb-4" style="padding:2rem 2.5rem">
+        <h1 class="h3 mb-1">Xin chào, @Model.Reader.FullName!</h1>
+        <div class="opacity-75">Mã độc giả: @Model.Reader.ReaderCode - Thẻ có hiệu lực đến @Model.Reader.CardExpiryDate.ToString("dd/MM/yyyy")</div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card kpi"><div class="kpi-icon bg-soft-primary"><i class="bi bi-journal-bookmark"></i></div>
+                <div><div class="label">Đang mượn</div><div class="value">@Model.Current.Count</div></div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card kpi"><div class="kpi-icon bg-soft-warning"><i class="bi bi-clock-history"></i></div>
+                <div><div class="label">Sắp đến hạn (3 ngày)</div><div class="value">@Model.DueSoon</div></div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card kpi"><div class="kpi-icon bg-soft-danger"><i class="bi bi-exclamation-triangle"></i></div>
+                <div><div class="label">Quá hạn</div><div class="value text-danger">@Model.Overdue</div></div></div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card kpi"><div class="kpi-icon bg-soft-success"><i class="bi bi-collection"></i></div>
+                <div><div class="label">Tổng lượt mượn</div><div class="value">@Model.TotalBorrowed</div></div></div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Sách đang mượn</span>
+            <a class="small text-decoration-none" asp-controller="Loans" asp-action="MyLoans">Xem toàn bộ lịch sử</a>
+        </div>
+        @if (!Model.Current.Any())
+        {
+            <div class="card-body text-muted">Bạn hiện không mượn cuốn sách nào.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead><tr><th>Sách</th><th>Hạn trả</th><th>Tình trạng</th></tr></thead>
+                    <tbody>
+                        @foreach (var d in Model.Current)
+                        {
+                            var daysLeft = (d.Loan!.DueDate.Date - today).Days;
+                            <tr>
+                                <td>@d.Book?.Title</td>
+                                <td>@d.Loan.DueDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (daysLeft < 0)
+                                    {
+                                        <span class="badge text-bg-danger">Quá hạn @(-daysLeft) ngày</span>
+                                    }
+                                    else if (daysLeft <= 3)
+                                    {
+                                        <span class="badge text-bg-warning">Còn @daysLeft ngày</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-success">Còn @daysLeft ngày</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+}
+<a class="btn btn-primary" asp-controller="Books" asp-action="Index"><i class="bi bi-search"></i> @L["Hero_SearchBtn"]</a>

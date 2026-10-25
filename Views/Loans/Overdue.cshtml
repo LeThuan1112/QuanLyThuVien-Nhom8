@@ -1,0 +1,42 @@
+@model List<LoanDetail>
+@{
+    ViewData["Title"] = "Sách quá hạn";
+    var today = DateTime.Today;
+}
+<h1 class="h3 mb-3">Sách quá hạn</h1>
+@if (!Model.Any())
+{
+    <div class="alert alert-success">Hiện không có sách nào quá hạn.</div>
+}
+else
+{
+    <div class="text-muted small mb-2">Có <strong>@Model.Count</strong> cuốn quá hạn chưa trả</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white border">
+            <thead class="table-light">
+                <tr>
+                    <th>Phiếu</th>
+                    <th>Độc giả</th>
+                    <th>Sách</th>
+                    <th>Hạn trả</th>
+                    <th class="text-center">Quá hạn (ngày)</th>
+                    <th class="text-end"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model)
+                {
+                    var days = Math.Max(1, (today - d.Loan!.DueDate.Date).Days);
+                    <tr>
+                        <td>#@d.LoanId</td>
+                        <td>@d.Loan.Reader?.ReaderCode - @d.Loan.Reader?.FullName</td>
+                        <td>@d.Book?.Title</td>
+                        <td>@d.Loan.DueDate.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center"><span class="badge text-bg-danger">@days</span></td>
+                        <td class="text-end"><a asp-action="Details" asp-route-id="@d.LoanId" class="btn btn-sm btn-outline-primary">Xử lý</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

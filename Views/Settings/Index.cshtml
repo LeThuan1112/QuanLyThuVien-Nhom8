@@ -1,0 +1,60 @@
+@model LibrarySettings
+@{
+    ViewData["Title"] = "Cài đặt hệ thống";
+}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+        <div class="card">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-1">Cài đặt quy tắc thư viện</h1>
+                <div class="text-muted mb-4">Chỉ Quản trị viên được thay đổi. Giá trị mới áp dụng cho các thao tác thực hiện sau khi lưu.</div>
+                <form asp-action="Index" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+
+                    <h2 class="h6 text-uppercase text-muted mb-3">Mượn sách</h2>
+                    <div class="mb-3">
+                        <label asp-for="LoanDays" class="form-label"></label>
+                        <input asp-for="LoanDays" class="form-control" />
+                        <span asp-validation-for="LoanDays" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="MaxBooksPerLoan" class="form-label"></label>
+                        <input asp-for="MaxBooksPerLoan" class="form-control" />
+                        <span asp-validation-for="MaxBooksPerLoan" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="MaxBooksAtOnce" class="form-label"></label>
+                        <input asp-for="MaxBooksAtOnce" class="form-control" />
+                        <span asp-validation-for="MaxBooksAtOnce" class="text-danger small"></span>
+                    </div>
+
+                    <h2 class="h6 text-uppercase text-muted mb-3">Gia hạn và phí phạt</h2>
+                    <div class="mb-3">
+                        <label asp-for="MaxRenewals" class="form-label"></label>
+                        <input asp-for="MaxRenewals" class="form-control" />
+                        <span asp-validation-for="MaxRenewals" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="RenewDays" class="form-label"></label>
+                        <input asp-for="RenewDays" class="form-control" />
+                        <span asp-validation-for="RenewDays" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="RenewalFeePerBook" class="form-label"></label>
+                        <input asp-for="RenewalFeePerBook" class="form-control" min="0" step="1" />
+                        <span asp-validation-for="RenewalFeePerBook" class="text-danger small"></span>
+                        <div class="form-text">Phí được ghi nhận khi gia hạn thành công; hiện chưa tích hợp xác nhận thu tiền.</div>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="FinePerDay" class="form-label"></label>
+                        <input asp-for="FinePerDay" class="form-control" />
+                        <span asp-validation-for="FinePerDay" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Lưu cài đặt</button>
+                    <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Dashboard">Hủy</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

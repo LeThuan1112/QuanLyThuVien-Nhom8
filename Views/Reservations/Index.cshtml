@@ -1,0 +1,33 @@
+@model List<BookReservation>
+@{
+    ViewData["Title"] = L["Reservation_QueueTitle"].Value;
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div><h1 class="h3 mb-1">@L["Reservation_QueueTitle"]</h1><p class="text-muted mb-0">@L["Reservation_QueueSubtitle"]</p></div>
+    <a class="btn btn-outline-secondary" asp-controller="Loans" asp-action="Index"><i class="bi bi-receipt"></i> @L["Nav_Loans"]</a>
+</div>
+@if (!Model.Any())
+{
+    <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>@L["Reservation_QueueEmpty"]</div>
+}
+else
+{
+    <div class="card border-0 shadow-sm"><div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light"><tr><th>@L["Col_Title"]</th><th>@L["Reservation_Reader"]</th><th>@L["Reservation_RequestedAt"]</th><th>@L["Reservation_Status"]</th><th>@L["Reservation_ExpiresAt"]</th></tr></thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><a asp-controller="Books" asp-action="Details" asp-route-id="@item.BookId" class="fw-semibold text-decoration-none">@item.Book?.Title</a><div class="small text-muted">@item.Book?.BookCode</div></td>
+                    <td>@item.Reader?.ReaderCode<div class="small text-muted">@item.Reader?.FullName</div></td>
+                    <td>@item.RequestedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@(item.Status == ReservationStatuses.Ready ? L["Reservation_Ready"].Value : L["Reservation_Waiting"].Value)</td>
+                    <td>@(item.ExpiresAt.HasValue ? item.ExpiresAt.Value.ToString("dd/MM/yyyy HH:mm") : "—")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div></div>
+}
+<div class="alert alert-info mt-3 small">Khi lập phiếu mượn cho một cuốn đang được giữ chỗ, hãy chọn đúng độc giả được thông báo. Hệ thống bảo vệ thứ tự hàng chờ.</div>

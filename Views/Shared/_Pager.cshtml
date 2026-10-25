@@ -1,0 +1,32 @@
+@using Microsoft.AspNetCore.Routing
+@model PagerViewModel
+@{
+    Func<int, string?> link = p =>
+    {
+        var rv = new RouteValueDictionary(Model.RouteValues);
+        rv["page"] = p;
+        return Url.Action(Model.Action, Model.Controller, rv);
+    };
+}
+@if (Model.TotalPages > 1)
+{
+    var start = Math.Max(1, Model.Page - 2);
+    var end = Math.Min(Model.TotalPages, Model.Page + 2);
+    <nav aria-label="Phân trang">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                <a class="page-link" href="@link(Math.Max(1, Model.Page - 1))">&laquo;</a>
+            </li>
+            @for (var p = start; p <= end; p++)
+            {
+                <li class="page-item @(p == Model.Page ? "active" : "")">
+                    <a class="page-link" href="@link(p)">@p</a>
+                </li>
+            }
+            <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="@link(Math.Min(Model.TotalPages, Model.Page + 1))">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center text-muted small">Trang @Model.Page / @Model.TotalPages</div>
+}

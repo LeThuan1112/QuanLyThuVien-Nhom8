@@ -1,0 +1,62 @@
+@model ThuVien.Models.Reader
+@using System.Globalization
+@{
+    var isCreateAction = string.Equals(
+        ViewContext.RouteData.Values["action"]?.ToString(),
+        "Create",
+        StringComparison.OrdinalIgnoreCase);
+    var readerCodePreview = ViewBag.ReaderCodePreview as string ?? Model.ReaderCode;
+}
+
+<div class="row g-3">
+    <div class="col-md-4">
+        @Html.LabelFor(m => m.ReaderCode, new { @class = "form-label" })
+        @if (isCreateAction)
+        {
+            <input type="text" id="ReaderCode" value="@readerCodePreview" class="form-control" readonly autocomplete="off" aria-describedby="readerCodeHelp" />
+            <div id="readerCodeHelp" class="form-text">Mã được hệ thống tự cấp khi lưu. Mã đang hiển thị chỉ là mã dự kiến.</div>
+        }
+        else
+        {
+            @Html.TextBoxFor(m => m.ReaderCode, new { @class = "form-control", autocomplete = "off", required = "required", maxlength = "20", placeholder = "VD: DB01" })
+            @Html.ValidationMessageFor(m => m.ReaderCode, "", new { @class = "text-danger small" })
+        }
+    </div>
+    <div class="col-md-8">
+        @Html.LabelFor(m => m.FullName, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", required = "required", maxlength = "100", placeholder = "Nhập họ và tên độc giả" })
+        @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-md-4">
+        @Html.LabelFor(m => m.Phone, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", type = "tel", maxlength = "20", placeholder = "VD: 0912345678" })
+        @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-md-8">
+        @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", maxlength = "100", placeholder = "name@example.com" })
+        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-12">
+        @Html.LabelFor(m => m.Address, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", maxlength = "255", placeholder = "Nhập địa chỉ" })
+        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.CardIssuedDate, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.CardIssuedDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+        @Html.ValidationMessageFor(m => m.CardIssuedDate, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-md-6">
+        @Html.LabelFor(m => m.CardExpiryDate, new { @class = "form-label" })
+        @Html.TextBoxFor(m => m.CardExpiryDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", required = "required" })
+        @Html.ValidationMessageFor(m => m.CardExpiryDate, "", new { @class = "text-danger small" })
+    </div>
+    <div class="col-12">
+        <div class="form-check mt-1">
+            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.IsActive, new { @class = "form-check-label" })
+        </div>
+        @Html.ValidationMessageFor(m => m.IsActive, "", new { @class = "text-danger small" })
+    </div>
+</div>

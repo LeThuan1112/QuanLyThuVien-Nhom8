@@ -1,0 +1,94 @@
+@model UserListViewModel
+@{
+    ViewData["Title"] = "Quản lý tài khoản";
+    var pager = new PagerViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Action = "Index",
+        Controller = "Users",
+        RouteValues = new Dictionary<string, object?> { ["keyword"] = Model.Keyword, ["role"] = Model.Role }
+    };
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0">Quản lý tài khoản</h1>
+        <div class="text-muted small">Chỉ Quản trị viên được truy cập chức năng này.</div>
+    </div>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-person-plus"></i> Tạo tài khoản</a>
+</div>
+
+<form method="get" asp-action="Index" class="card card-body mb-3">
+    <div class="row g-2">
+        <div class="col-12 col-md-6">
+            <input type="text" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Tìm theo tên đăng nhập, họ tên, email..." />
+        </div>
+        <div class="col-6 col-md-3">
+            <select name="role" class="form-select">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Role))">Tất cả vai trò</option>
+                <option value="Admin" selected="@(Model.Role == "Admin")">Quản trị viên</option>
+                <option value="Librarian" selected="@(Model.Role == "Librarian")">Thủ thư</option>
+                <option value="Reader" selected="@(Model.Role == "Reader")">Độc giả</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-3 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm</button>
+        </div>
+    </div>
+</form>
+
+<div class="text-muted small mb-2">Tìm thấy <strong>@Model.TotalItems</strong> tài khoản</div>
+
+@if (!Model.Users.Any())
+{
+    <div class="alert alert-warning">Không có tài khoản phù hợp.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Tên đăng nhập</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                    <th>Hồ sơ độc giả</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Users)
+                {
+                    <tr>
+                        <td class="fw-semibold">@u.Username</td>
+                        <td>@u.FullName</td>
+                        <td>@u.Email</td>
+                        <td><span class="badge @RoleDisplay.Badge(u.Role)">@RoleDisplay.Name(u.Role)</span></td>
+                        <td>@(Model.ReaderCodes.TryGetValue(u.UserId, out var code) ? code : "-")</td>
+                        <td>
+                            @if (u.IsActive)
+                            {
+                                <span class="badge text-bg-success">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-secondary">Bị khóa</span>
+                            }
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Edit" asp-route-id="@u.UserId" class="btn btn-sm btn-outline-primary">Sửa</a>
+                            <a asp-action="ResetPassword" asp-route-id="@u.UserId" class="btn btn-sm btn-outline-secondary">Đặt lại MK</a>
+                            <form asp-action="ToggleActive" asp-route-id="@u.UserId" method="post" class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc muốn đổi trạng thái tài khoản này?');">
+                                <button type="submit" class="btn btn-sm btn-outline-warning">@(u.IsActive ? "Khóa" : "Mở khóa")</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-3"><partial name="_Pager" model="pager" /></div>
+}

@@ -1,0 +1,145 @@
+@using System.Globalization
+@{
+    var isAdmin = User.IsInRole(AppRoles.Admin);
+    var isStaff = isAdmin || User.IsInRole(AppRoles.Librarian);
+    var isReader = User.IsInRole(AppRoles.Reader);
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    Func<string, string> c = name => string.Equals(ctrl, name, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+
+    var aDashboard = (c("Home") == "active" && act == "Dashboard") ? "active" : "";
+    var aBorrow = (c("Loans") == "active" && act == "Create") ? "active" : "";
+    var aLoans = (c("Loans") == "active" && (act == "Index" || act == "Details")) ? "active" : "";
+    var aOverdue = (c("Loans") == "active" && act == "Overdue") ? "active" : "";
+    var aReservations = c("Reservations");
+    var aMyReservations = (c("Reservations") == "active" && act == "My") ? "active" : "";
+    var aBooks = c("Books");
+    var aCategories = c("Categories");
+    var aReaders = c("Readers");
+    var aReports = c("Reports");
+    var aUsers = c("Users");
+    var aAudit = c("AuditLogs");
+    var aSettings = c("Settings");
+    var aHome = (c("Home") == "active" && act == "Index") ? "active" : "";
+    var aReaderHome = (c("Home") == "active" && act == "ReaderHome") ? "active" : "";
+    var aMyLoans = (c("Loans") == "active" && act == "MyLoans") ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - @L["App_Name"]</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+@if (isStaff)
+{
+    <div class="app-shell">
+        <aside class="sidebar @(isAdmin ? "sidebar-admin" : "")" id="sidebar">
+            <a class="sidebar-brand" asp-controller="Home" asp-action="Dashboard">
+                <span class="brand-icon"><i class="bi bi-book-half"></i></span>
+                <span>@L["App_Name"]</span>
+            </a>
+            <div class="px-2 pb-1">
+                <span class="role-chip @(isAdmin ? "role-admin" : "role-lib")">@(isAdmin ? RoleDisplay.Name(AppRoles.Admin) : RoleDisplay.Name(AppRoles.Librarian))</span>
+            </div>
+            <nav class="nav flex-column">
+                <div class="nav-group">@L["Nav_GroupOverview"]</div>
+                <a class="nav-link @aDashboard" asp-controller="Home" asp-action="Dashboard"><i class="bi bi-speedometer2"></i> @L["Nav_Dashboard"]</a>
+
+                <div class="nav-group">@L["Nav_GroupOps"]</div>
+                <a class="nav-link @aBorrow" asp-controller="Loans" asp-action="Create"><i class="bi bi-journal-arrow-up"></i> @L["Nav_Borrow"]</a>
+                <a class="nav-link @aLoans" asp-controller="Loans" asp-action="Index"><i class="bi bi-receipt"></i> @L["Nav_Loans"]</a>
+                <a class="nav-link @aOverdue" asp-controller="Loans" asp-action="Overdue"><i class="bi bi-exclamation-triangle"></i> @L["Nav_Overdue"]</a>
+                <a class="nav-link @aReservations" asp-controller="Reservations" asp-action="Index"><i class="bi bi-bookmark-check"></i> @L["Nav_Reservations"]</a>
+
+                <div class="nav-group">@L["Nav_GroupCatalog"]</div>
+                <a class="nav-link @aBooks" asp-controller="Books" asp-action="Index"><i class="bi bi-book"></i> @L["Nav_Books"]</a>
+                <a class="nav-link @aCategories" asp-controller="Categories" asp-action="Index"><i class="bi bi-tags"></i> @L["Nav_Categories"]</a>
+                <a class="nav-link @aReaders" asp-controller="Readers" asp-action="Index"><i class="bi bi-people"></i> @L["Nav_Readers"]</a>
+
+                <div class="nav-group">@L["Nav_GroupSystem"]</div>
+                <a class="nav-link @aReports" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart-line"></i> @L["Nav_Reports"]</a>
+                @if (isAdmin)
+                {
+                    <div class="nav-group">@L["Nav_GroupAdmin"]</div>
+                    <a class="nav-link @aUsers" asp-controller="Users" asp-action="Index"><i class="bi bi-person-gear"></i> @L["Nav_Users"]</a>
+                    <a class="nav-link @aAudit" asp-controller="AuditLogs" asp-action="Index"><i class="bi bi-clipboard-data"></i> @L["Nav_AuditLog"]</a>
+                    <a class="nav-link @aSettings" asp-controller="Settings" asp-action="Index"><i class="bi bi-sliders"></i> @L["Nav_Settings"]</a>
+                }
+            </nav>
+        </aside>
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+        <div class="app-main">
+            <header class="topbar no-print">
+                <button class="btn btn-light border d-lg-none" id="btnSidebar" type="button" aria-label="Menu"><i class="bi bi-list"></i></button>
+                <div class="topbar-title">@ViewData["Title"]</div>
+                <div class="ms-auto"><partial name="_UserMenu" /></div>
+            </header>
+            <main class="page-content">
+                <partial name="_Alerts" />
+                @RenderBody()
+            </main>
+            <footer class="text-center text-muted small py-3">@L["Footer_Text", DateTime.Now.Year]</footer>
+        </div>
+    </div>
+}
+else
+{
+    <nav class="navbar navbar-expand-lg public-nav">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-icon text-white" style="width:36px;height:36px;font-size:1.1rem"><i class="bi bi-book-half"></i></span>
+                @L["App_Name"]
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav" aria-controls="publicNav" aria-expanded="false" aria-label="Menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="publicNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link @aHome" asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a></li>
+                    <li class="nav-item"><a class="nav-link @aBooks" asp-controller="Books" asp-action="Index">@L["Nav_Books"]</a></li>
+                    @if (isReader)
+                    {
+                        <li class="nav-item"><a class="nav-link @aReaderHome" asp-controller="Home" asp-action="ReaderHome">@L["Nav_MyPage"]</a></li>
+                        <li class="nav-item"><a class="nav-link @aMyLoans" asp-controller="Loans" asp-action="MyLoans">@L["Nav_MyLoans"]</a></li>
+                        <li class="nav-item"><a class="nav-link @aMyReservations" asp-controller="Reservations" asp-action="My">@L["Nav_MyReservations"]</a></li>
+                    }
+                </ul>
+                <partial name="_UserMenu" />
+            </div>
+        </div>
+    </nav>
+    <main class="container py-4">
+        <partial name="_Alerts" />
+        @RenderBody()
+    </main>
+    <footer class="text-center text-muted small py-4">@L["Footer_Text", DateTime.Now.Year]</footer>
+}
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(function () {
+            function toggleSidebar() {
+                $('#sidebar').toggleClass('open');
+                $('#sidebarBackdrop').toggleClass('show');
+            }
+            $('#btnSidebar').on('click', toggleSidebar);
+            $('#sidebarBackdrop').on('click', toggleSidebar);
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

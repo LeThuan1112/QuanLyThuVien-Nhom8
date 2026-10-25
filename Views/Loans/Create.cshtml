@@ -1,0 +1,137 @@
+@{
+    ViewData["Title"] = "Lập phiếu mượn";
+    var readers = (IEnumerable<SelectListItem>)ViewBag.Readers;
+    var dueDate = (DateTime)ViewBag.DueDate;
+}
+<h1 class="h3 mb-3">Lập phiếu mượn</h1>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="readerId">Độc giả</label>
+                    <select id="readerId" name="readerId" asp-items="readers" class="form-select" required>
+                        <option value="">-- Chọn độc giả --</option>
+                    </select>
+                    <div class="form-text">Chỉ hiển thị độc giả có thẻ còn hiệu lực.</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Hạn trả</label>
+                    <input type="text" class="form-control" value="@dueDate.ToString("dd/MM/yyyy") (@ViewBag.LoanDays ngày kể từ hôm nay)" disabled />
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="note">Ghi chú</label>
+                    <input id="note" name="note" class="form-control" maxlength="255" value="@(ViewBag.Note as string)" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="h5">Tìm và thêm sách</h2>
+            <div class="input-group mb-2">
+                <input type="text" id="bookTerm" class="form-control" placeholder="Nhập tên sách, mã sách hoặc tác giả rồi nhấn Tìm..." />
+                <button type="button" id="btnSearch" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm</button>
+            </div>
+            <div id="bookResults"></div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="h5">Sách trong phiếu <small class="text-muted">(tối đa @ViewBag.MaxBooks)</small></h2>
+            <div id="cartEmpty" class="text-muted">Chưa chọn cuốn sách nào.</div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <tbody id="cartBody"></tbody>
+                </table>
+            </div>
+            <div id="hiddenIds"></div>
+        </div>
+    </div>
+
+    <button type="submit" id="btnSubmit" class="btn btn-primary" disabled>Lập phiếu mượn</button>
+    <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var maxBooks = @ViewBag.MaxBooks;
+            var cart = @Html.Raw((string)ViewBag.InitialCartJson);
+            var $results = $('#bookResults');
+            var $cartBody = $('#cartBody');
+            var $hidden = $('#hiddenIds');
+            var $submit = $('#btnSubmit');
+            var $empty = $('#cartEmpty');
+
+            function inCart(id) {
+                return cart.some(function (b) { return b.id === id; });
+            }
+
+            function renderCart() {
+                $cartBody.empty();
+                $hidden.empty();
+                $.each(cart, function (i, b) {
+                    var $tr = $('<tr>');
+                    $tr.append($('<td>').text(b.code));
+                    $tr.append($('<td>').text(b.title));
+                    var $btn = $('<button type="button" class="btn btn-sm btn-outline-danger">Bỏ</button>')
+                        .on('click', function () { cart.splice(i, 1); renderCart(); });
+                    $tr.append($('<td class="text-end">').append($btn));
+                    $cartBody.append($tr);
+                    $hidden.append($('<input type="hidden" name="bookIds">').val(b.id));
+                });
+                $empty.toggle(cart.length === 0);
+                $submit.prop('disabled', cart.length === 0);
+            }
+
+            function renderResults(data) {
+                $results.empty();
+                if (!data.length) {
+                    $results.append($('<div class="alert alert-warning mb-0">').text('Không tìm thấy sách còn có thể cho mượn.'));
+                    return;
+                }
+                var $list = $('<div class="list-group">');
+                $.each(data, function (i, b) {
+                    var $item = $('<div class="list-group-item d-flex justify-content-between align-items-center">');
+                    var $text = $('<div>');
+                    $text.append($('<strong>').text(b.title));
+                    $text.append($('<div class="small text-muted">').text(b.code + ' - ' + b.author + ' - còn ' + b.available + ' bản'));
+                    var $add = $('<button type="button" class="btn btn-sm btn-primary">Thêm</button>');
+                    if (inCart(b.id)) { $add.prop('disabled', true).text('Đã thêm'); }
+                    $add.on('click', function () {
+                        if (inCart(b.id)) { return; }
+                        if (cart.length >= maxBooks) { alert('Mỗi phiếu chỉ được tối đa ' + maxBooks + ' đầu sách.'); return; }
+                        cart.push({ id: b.id, code: b.code, title: b.title });
+                        renderCart();
+                        $add.prop('disabled', true).text('Đã thêm');
+                    });
+                    $item.append($text).append($add);
+                    $list.append($item);
+                });
+                $results.append($list);
+            }
+
+            function search() {
+                $results.html('<div class="text-muted">Đang tìm...</div>');
+                $.getJSON('@Url.Action("SearchBooks", "Loans")', { term: $('#bookTerm').val() })
+                    .done(renderResults)
+                    .fail(function () {
+                        $results.html('<div class="alert alert-danger mb-0">Không tìm được sách. Vui lòng thử lại.</div>');
+                    });
+            }
+
+            $('#btnSearch').on('click', search);
+            $('#bookTerm').on('keydown', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); search(); }
+            });
+
+            renderCart();
+        })();
+    </script>
+}

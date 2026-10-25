@@ -1,0 +1,23 @@
+@model Book
+@{
+    ViewData["Title"] = "Sửa sách";
+}
+<h1 class="h3 mb-3">Sửa sách</h1>
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" asp-route-id="@Model.BookId" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+            <input type="hidden" asp-for="BookId" />
+            <input type="hidden" asp-for="RowVersion" />
+            <div class="alert alert-info py-2">
+                Số bản còn lại hiện tại: <strong>@Model.AvailableCopies</strong>
+                (tự động điều chỉnh theo tổng số bản; không sửa trực tiếp).
+            </div>
+            <partial name="_BookFields" model="Model" />
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <a class="btn btn-outline-secondary" asp-action="Index">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

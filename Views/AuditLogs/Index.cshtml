@@ -1,0 +1,105 @@
+@model AuditListViewModel
+@{
+    ViewData["Title"] = "Nhật ký hoạt động";
+    var fromStr = Model.From?.ToString("yyyy-MM-dd");
+    var toStr = Model.To?.ToString("yyyy-MM-dd");
+    var pager = new PagerViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Action = "Index",
+        Controller = "AuditLogs",
+        RouteValues = new Dictionary<string, object?>
+        {
+            ["keyword"] = Model.Keyword,
+            ["status"] = Model.Status,
+            ["from"] = fromStr,
+            ["to"] = toStr
+        }
+    };
+}
+<div class="mb-3">
+    <h1 class="h3 mb-0">Nhật ký hoạt động</h1>
+    <div class="text-muted small">Ghi lại đăng nhập và các thao tác thay đổi dữ liệu. Mật khẩu và dữ liệu nhạy cảm không được lưu.</div>
+</div>
+
+<form method="get" asp-action="Index" class="card card-body mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-4">
+            <label class="form-label" for="keyword">Từ khóa</label>
+            <input type="text" id="keyword" name="keyword" value="@Model.Keyword" class="form-control" placeholder="Người dùng, hành động, chi tiết..." />
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label" for="status">Kết quả</label>
+            <select id="status" name="status" class="form-select">
+                <option value="" selected="@(string.IsNullOrEmpty(Model.Status))">Tất cả</option>
+                <option value="ok" selected="@(Model.Status == "ok")">Thành công</option>
+                <option value="fail" selected="@(Model.Status == "fail")">Thất bại</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label" for="from">Từ ngày</label>
+            <input type="date" id="from" name="from" value="@fromStr" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label class="form-label" for="to">Đến ngày</label>
+            <input type="date" id="to" name="to" value="@toStr" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Lọc</button>
+        </div>
+    </div>
+</form>
+
+<div class="text-muted small mb-2">Tìm thấy <strong>@Model.TotalItems</strong> bản ghi</div>
+
+@if (!Model.Logs.Any())
+{
+    <div class="alert alert-info">Chưa có nhật ký nào phù hợp.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Người dùng</th>
+                    <th>Hành động</th>
+                    <th>Chi tiết</th>
+                    <th>Kết quả</th>
+                    <th>Địa chỉ IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model.Logs)
+                {
+                    <tr>
+                        <td class="text-nowrap">@l.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                        <td>
+                            @(string.IsNullOrEmpty(l.Username) ? "-" : l.Username)
+                            @if (!string.IsNullOrEmpty(l.Role))
+                            {
+                                <span class="badge @RoleDisplay.Badge(l.Role) ms-1">@RoleDisplay.Name(l.Role)</span>
+                            }
+                        </td>
+                        <td class="fw-semibold">@l.Action</td>
+                        <td>@l.Detail</td>
+                        <td>
+                            @if (l.Success)
+                            {
+                                <span class="badge text-bg-success">Thành công</span>
+                            }
+                            else
+                            {
+                                <span class="badge text-bg-danger">Thất bại</span>
+                            }
+                        </td>
+                        <td class="text-muted small">@l.IpAddress</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-3"><partial name="_Pager" model="pager" /></div>
+}

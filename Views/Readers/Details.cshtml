@@ -1,0 +1,49 @@
+@model ReaderDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết độc giả";
+    var r = Model.Reader;
+    var now = DateTime.Now;
+}
+<h1 class="h3 mb-3">@r.FullName <small class="text-muted">(@r.ReaderCode)</small></h1>
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Điện thoại</dt><dd class="col-sm-9">@r.Phone</dd>
+            <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@r.Email</dd>
+            <dt class="col-sm-3">Địa chỉ</dt><dd class="col-sm-9">@r.Address</dd>
+            <dt class="col-sm-3">Ngày cấp thẻ</dt><dd class="col-sm-9">@r.CardIssuedDate.ToString("dd/MM/yyyy")</dd>
+            <dt class="col-sm-3">Ngày hết hạn</dt><dd class="col-sm-9">@r.CardExpiryDate.ToString("dd/MM/yyyy")</dd>
+            <dt class="col-sm-3">Trạng thái thẻ</dt>
+            <dd class="col-sm-9">@(r.IsActive ? "Còn hiệu lực" : "Bị khóa")</dd>
+        </dl>
+    </div>
+</div>
+
+<h2 class="h5">Lịch sử phiếu mượn</h2>
+@if (!Model.Loans.Any())
+{
+    <div class="alert alert-info">Độc giả chưa có phiếu mượn nào.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover bg-white border">
+            <thead class="table-light">
+                <tr><th>Mã phiếu</th><th>Ngày mượn</th><th>Hạn trả</th><th class="text-center">Số cuốn</th><th class="text-center">Chưa trả</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var l in Model.Loans)
+                {
+                    <tr>
+                        <td><a asp-controller="Loans" asp-action="Details" asp-route-id="@l.LoanId">#@l.LoanId</a></td>
+                        <td>@l.LoanDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@l.DueDate.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">@l.Details.Count</td>
+                        <td class="text-center">@l.Details.Count(d => d.ReturnDate == null)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<a class="btn btn-outline-secondary" asp-action="Index">Quay lại danh sách</a>
