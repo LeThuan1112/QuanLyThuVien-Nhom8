@@ -1,79 +1,191 @@
 # Hệ thống quản lý thư viện — ASP.NET Core MVC / .NET 10
 
-Bản nâng cấp cho bài tập lớn, xây dựng trên cấu trúc dự án ban đầu. Dùng ASP.NET Core MVC, Entity Framework Core và SQL Server/LocalDB. Giao diện MVC dùng cookie; các endpoint API dành cho nhân viên có JWT Bearer.
+## Tài khoản demo chạy thử
 
-## Trước khi dùng bản nâng cấp
-1. Sao lưu thư mục dự án đang chạy và database SQL Server/LocalDB.
-2. Giải nén bản nâng cấp vào **thư mục mới** để thử trước, không ghi đè ngay dự án đang chạy.
-3. So sánh `appsettings.json` và `appsettings.Development.json` của dự án đang chạy với bản mới. Giữ lại chuỗi kết nối đang sử dụng nếu muốn tiếp tục dùng dữ liệu cũ; không đưa secret vào git hoặc chia sẻ công khai.
-4. Nếu dùng database hiện có, sao lưu trước lần chạy đầu vì `DbBootstrap` bổ sung bảng/cột cho phí gia hạn, ảnh bìa và đặt trước. Không xóa database để sửa lỗi build.
+Các tài khoản dưới đây được cung cấp cho mục đích trình diễn bài tập lớn:
 
-## Yêu cầu
-- .NET 10 SDK hoặc Visual Studio 2026 với workload ASP.NET and web development.
-- SQL Server hoặc SQL Server LocalDB.
+| Vai trò | Tên đăng nhập | Mật khẩu demo |
+|---|---|---|
+| Quản trị viên (Admin) | `Admin2` | `admin123` |
+| Thủ thư | `thuthu2` | `thuthu123` |
+| Độc giả | `docgia2` | `docgia123` |
 
-## Chạy ứng dụng
-Tại thư mục chứa `ThuVien.csproj`, mở PowerShell:
+**Lưu ý:** Các tài khoản trên cần tồn tại trong database của phiên bản bàn giao để đăng nhập được. Nếu tài khoản không đăng nhập được trên máy mới, hãy kiểm tra dữ liệu khởi tạo người dùng và database đang được ứng dụng sử dụng. Đây là tài khoản demo cho bài tập, không dùng lại các mật khẩu này cho email hoặc dịch vụ cá nhân. Do repository đang công khai, bất kỳ ai xem README cũng có thể đọc được các thông tin demo ở đây.
 
-```powershell
-dotnet restore .\ThuVien.csproj
-dotnet build .\ThuVien.csproj
-dotnet run --project .\ThuVien.csproj
+Bài tập lớn học phần **Lập trình Web**, **Nhóm 8**, lớp **N07.BT1**, Khoa Công nghệ thông tin, Trường Đại học Giao thông vận tải.
+
+**Giảng viên hướng dẫn:** Lại Mạnh Dũng.
+
+## 1. Giới thiệu đề tài
+
+Hệ thống quản lý thư viện là ứng dụng web hỗ trợ quản lý sách, thể loại, tác giả, nhà xuất bản, độc giả và các nghiệp vụ mượn — trả sách. Ứng dụng được xây dựng bằng C# và ASP.NET Core MVC, sử dụng Entity Framework Core để làm việc với cơ sở dữ liệu SQL Server/LocalDB. Hệ thống có các vai trò Admin, Thủ thư và Độc giả; mỗi vai trò được phép sử dụng các chức năng phù hợp với quyền được cấp.
+
+## 2. Thành viên và phân công
+
+| Thành viên | Mã sinh viên | Phần việc phụ trách |
+|---|---|---|
+| **Lê Văn Thuận (Trưởng nhóm)** | **V624022** | Phụ trách chính: phân tích yêu cầu, thiết kế cơ sở dữ liệu, phát triển Backend và Frontend, tích hợp chức năng, kiểm thử, chụp ảnh giao diện, tổng hợp và hoàn thiện báo cáo. |
+| Trịnh Ngọc Huy | V624012 | Đọc, xem xét mã nguồn và báo cáo sau khi trưởng nhóm hoàn thành; tìm hiểu nội dung và kết quả của hệ thống. |
+| Nguyễn Trần Ngọc Minh | V624018 | Đọc, xem xét nội dung báo cáo sau khi trưởng nhóm hoàn thành; tìm hiểu kết quả thực hiện và cách trình bày. |
+| Bùi Thành Long | V624016 | Trải nghiệm và kiểm thử giao diện ứng dụng web; rà soát lỗi hiển thị, phông chữ, chính tả và bố cục; ghi nhận lỗi và đóng góp ý kiến để hoàn thiện báo cáo. |
+
+## 3. Chức năng
+
+### 3.1. Tra cứu và quản lý dữ liệu
+
+- Tra cứu, tìm kiếm và xem thông tin sách.
+- Quản lý sách: xem, thêm, sửa và cập nhật thông tin theo chức năng của ứng dụng.
+- Quản lý thể loại sách.
+- Quản lý thông tin độc giả.
+- Hỗ trợ cấp mã sách và mã độc giả tự động theo quy tắc trong ứng dụng.
+
+### 3.2. Đăng nhập và phân quyền
+
+- Đăng nhập và đăng xuất.
+- Phân quyền theo các vai trò **Admin**, **Thủ thư** và **Độc giả**.
+- Điều hướng giao diện và giới hạn chức năng theo vai trò người dùng.
+- Kiểm soát quyền truy cập vào các khu vực chức năng.
+
+### 3.3. Nghiệp vụ mượn — trả
+
+- Lập phiếu mượn và theo dõi tình trạng mượn sách.
+- Xử lý trả sách và cập nhật số lượng sách còn có thể cho mượn.
+- Theo dõi sách quá hạn và phí phạt.
+- Gia hạn mượn sách và lưu lịch sử gia hạn.
+- Đặt trước sách và xử lý hàng chờ.
+- Xem lịch sử mượn — trả theo phạm vi quyền được cấp.
+
+### 3.4. Thống kê và quản trị
+
+- Dashboard tổng hợp một số số liệu hoạt động của thư viện.
+- Xuất báo cáo CSV.
+- Quản lý thiết lập động của ứng dụng.
+- Ghi nhật ký hoạt động (Audit Logs) phục vụ theo dõi và rà soát.
+- Có các API phục vụ những thao tác đã được triển khai trong dự án.
+
+## 4. Công nghệ sử dụng
+
+- **Ngôn ngữ:** C#.
+- **Nền tảng:** ASP.NET Core MVC, .NET 10.
+- **Truy cập dữ liệu:** Entity Framework Core.
+- **Cơ sở dữ liệu:** SQL Server LocalDB.
+- **Giao diện:** Razor, HTML5, CSS3, Bootstrap, JavaScript và jQuery.
+- **Kiểm thử:** .NET test project.
+
+## 5. Cấu trúc mã nguồn
+
+```text
+ThuVien/
+├── Api/                 # Các kiểu dữ liệu phản hồi API
+├── Controllers/         # Controller cho các trang và nghiệp vụ
+│   └── Api/             # API controller
+├── Data/                # DbContext, khởi tạo và bootstrap dữ liệu
+├── Database/            # Script cơ sở dữ liệu
+├── Models/              # Entity và các kiểu dữ liệu miền
+├── Properties/          # Cấu hình chạy local
+├── Resources/           # Tài nguyên ngôn ngữ
+├── Services/            # Dịch vụ nghiệp vụ
+├── ViewModels/          # ViewModel cho giao diện
+├── Views/               # Các trang Razor
+├── docs/                # Tài liệu kỹ thuật và kiểm thử
+├── sql/                 # Script SQL tùy chọn
+├── tests/               # Unit test
+├── wwwroot/             # CSS, JavaScript và tài nguyên tĩnh
+├── appsettings.json     # Cấu hình ứng dụng
+├── Program.cs           # Điểm khởi chạy ứng dụng
+├── ThuVien.csproj       # File dự án
+└── README.md            # Tài liệu này
 ```
 
-Mở đúng URL in ở dòng `Now listening on`. Profile mặc định trong `Properties/launchSettings.json` dùng `https://localhost:7080` và `http://localhost:5080`, nhưng cổng có thể khác theo môi trường.
+## 6. Yêu cầu môi trường
 
-## Chạy kiểm thử tự động
+- Windows 10/11.
+- **.NET 10 SDK**.
+- **Visual Studio 2022 hoặc phiên bản hỗ trợ .NET 10**, có workload **ASP.NET and web development**.
+- **SQL Server LocalDB**. Có thể sử dụng SSMS để xem và quản lý database; SSMS là công cụ hỗ trợ, không phải điều kiện bắt buộc để mở mã nguồn.
+- Kết nối mạng khi cần khôi phục các gói NuGet hoặc tải tài nguyên bên ngoài.
+
+## 7. Cách tải, mở và chạy ứng dụng bằng Visual Studio
+
+### Bước 1. Tải và giải nén mã nguồn
+
+Tải mã nguồn ZIP từ GitHub hoặc tải gói mã nguồn do nhóm cung cấp. Giải nén vào một thư mục dễ tìm, ví dụ `Downloads` hoặc `Documents`. Không chạy dự án trực tiếp bên trong file ZIP.
+
+### Bước 2. Mở dự án trong Visual Studio
+
+1. Mở **Visual Studio**.
+2. Ở màn hình bắt đầu, nhấn **Open a project or solution**.
+3. Duyệt đến thư mục vừa giải nén.
+4. Mở thư mục con có tên **`ThuVien`** nếu mã nguồn được đóng gói theo cấu trúc có thư mục con này.
+5. Chọn file **`ThuVien.csproj`**, sau đó nhấn **Open**.
+6. Chờ Visual Studio tải dự án và khôi phục các gói NuGet. Nếu được yêu cầu, xác nhận khôi phục gói.
+
+### Bước 3. Kiểm tra cấu hình database
+
+Mở file `appsettings.json` trong dự án và kiểm tra phần `ConnectionStrings:DefaultConnection`. Cấu hình LocalDB đang được sử dụng trong môi trường phát triển là:
+
+```text
+Server=(localdb)\MSSQLLocalDB;Database=ThuVienDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true
+```
+
+Chuỗi kết nối này sử dụng SQL Server LocalDB trên chính máy đang chạy ứng dụng, với database tên `ThuVienDb`. Database trên máy phát triển **không tự động được đóng gói cùng mã nguồn GitHub**. Nếu đây là máy mới hoặc database chưa tồn tại, làm theo script/hướng dẫn khởi tạo database đi kèm mã nguồn. Tránh chạy các lệnh xóa hoặc ghi đè dữ liệu khi chưa sao lưu.
+
+### Bước 4. Khôi phục gói và build dự án
+
+Visual Studio thường tự khôi phục gói NuGet khi mở dự án. Nếu cần kiểm tra thủ công, mở Terminal/PowerShell tại thư mục chứa `ThuVien.csproj` và chạy:
+
+```powershell
+dotnet restore
+dotnet build .\ThuVien.csproj
+```
+
+Chỉ tiếp tục khi quá trình build kết thúc thành công.
+
+### Bước 5. Chạy ứng dụng
+
+Trong Visual Studio, đặt `ThuVien` làm Startup Project nếu được yêu cầu. Sau đó:
+
+- Nhấn **F5** để chạy kèm trình gỡ lỗi; hoặc
+- Nhấn **Ctrl + F5** để chạy không kèm trình gỡ lỗi.
+
+Trình duyệt sẽ mở ứng dụng. Trong cấu hình đã dùng khi phát triển, các địa chỉ thường xuất hiện là:
+
+- `https://localhost:7080`
+- `http://localhost:5080`
+
+Nếu máy của bạn hiển thị cổng khác, hãy sử dụng URL được in trong cửa sổ chạy ứng dụng hoặc tại dòng `Now listening on`.
+
+### Bước 6. Đăng nhập
+
+Mở trang đăng nhập của website và sử dụng một trong các tài khoản chạy thử ở mục tiếp theo. Sau khi đăng nhập, kiểm tra các trang và chức năng theo vai trò tài khoản.
+
+
+## 8. Kiểm thử
+
+Trong lần kiểm tra đã ghi nhận, dự án build thành công và bộ unit test có **22/22 trường hợp thành công**, không có trường hợp thất bại hoặc bị bỏ qua.
+
+Có thể chạy bộ unit test bằng lệnh sau tại thư mục dự án:
 
 ```powershell
 dotnet test .\tests\ThuVien.Tests\ThuVien.Tests.csproj
 ```
 
-Bộ test hiện có kiểm tra các quy tắc thuần (trạng thái quá hạn, nhãn vai trò, trạng thái đặt trước). Đây chưa phải integration test bao phủ database; cần chạy trên máy có .NET SDK và bổ sung kiểm thử thực tế trước khi nộp.
+Unit test không thay thế việc kiểm thử thủ công toàn bộ ứng dụng. Trước khi bàn giao, nên kiểm tra các luồng chính như đăng nhập, phân quyền, tra cứu sách, quản lý độc giả, mượn — trả, gia hạn, đặt trước, phí phạt và xuất CSV. Chỉ xác nhận một ca kiểm thử đạt khi đã thực sự thực hiện và ghi nhận kết quả.
 
-## Chức năng trong bản nâng cấp
-- Trang chủ công khai, danh mục sách có ảnh bìa, tìm kiếm tên/mã/tác giả/ISBN, lọc thể loại/trạng thái, sắp xếp và phân trang AJAX.
-- Trang chi tiết sách; nhân viên quản lý sách; ảnh bìa chấp nhận URL HTTPS hoặc đường dẫn nội bộ bắt đầu bằng `/`.
-- CRUD sách/thể loại/độc giả/tài khoản; liên kết tài khoản Độc giả với hồ sơ; phân quyền Admin, Thủ thư, Độc giả.
-- Mượn/trả/gia hạn; tồn kho cập nhật trong transaction; trạng thái quá hạn theo ngày lịch; phí phạt quá hạn và phí gia hạn là hai khoản khác nhau.
-- Lịch sử gia hạn lưu số cuốn đang mượn, số ngày cộng thêm, người thực hiện và phí phát sinh.
-- Đặt trước sách và hàng chờ theo thời điểm yêu cầu; lượt giữ chỗ có thời hạn nhận mặc định 3 ngày; hàng chờ được làm mới định kỳ.
-- Dashboard, báo cáo theo kỳ, CSV có BOM UTF-8, nhật ký thao tác, chống CSRF, giới hạn tần suất đăng nhập/API token.
-- API REST: danh mục/chi tiết sách công khai, lấy JWT tại `/api/auth/token`, endpoint tạo sách và danh sách quá hạn cần JWT Bearer cùng vai trò Admin/Thủ thư. Xem `docs/API.md`.
-- Tài nguyên tiếng Việt/Anh cho các khu vực chính; một số câu validation và màn hình quản trị vẫn có chuỗi tiếng Việt trực tiếp, vì vậy chưa nên khẳng định toàn bộ ứng dụng được bản địa hóa 100%.
+## 9. Phạm vi và giới hạn
 
-## Database / schema
-- Với database mới, ứng dụng khởi tạo schema từ mô hình EF Core.
-- Với database đã có, `Data/DbBootstrap.cs` bổ sung một số bảng/cột cần thiết (phí gia hạn, hàng chờ, ảnh bìa). Sao lưu trước khi mở phiên bản nâng cấp và xem log khởi động.
-- `EnsureCreated()` không thay thế EF Core Migrations cho phát triển dài hạn. Chuyển sang migrations cần một bước riêng có kế hoạch và kiểm tra schema, không chạy lệnh xóa/tạo lại database.
-- Seeder chỉ tạo tài khoản và dữ liệu demo khi `ASPNETCORE_ENVIRONMENT=Development`, và chỉ khi database chưa có người dùng. Không sử dụng tài khoản demo cho production.
+Phiên bản tập trung vào quản lý sách, thể loại, độc giả và các nghiệp vụ mượn — trả, gia hạn, đặt trước, phân quyền, thống kê và nhật ký hoạt động. Khả năng vận hành trên máy khác phụ thuộc vào việc cài đúng .NET 10, cấu hình chuỗi kết nối và có database phù hợp. Một số cảnh báo phục vụ môi trường Development có thể xuất hiện khi chạy local; cần rà soát cấu hình bảo mật trước khi triển khai thực tế.
 
-## Cấu hình JWT
-- Ở Development, ứng dụng tạo khóa ký tạm nếu chưa có cấu hình; token sẽ mất hiệu lực sau khi ứng dụng khởi động lại.
-- Môi trường triển khai yêu cầu cấu hình biến môi trường `JWT_SIGNING_KEY` hoặc `Authentication:Jwt:SigningKey`, tối thiểu 32 byte. Dùng secret store/biến môi trường, không commit khóa thật vào source control.
+## 10. Quản lý công việc
 
-## Những gì chưa phải tích hợp thực tế
-- **Quên mật khẩu qua email:** chưa gửi mail thật vì cần SMTP/email provider và secret. Admin có thể đặt lại mật khẩu cho người dùng.
-- **Thanh toán:** phí phạt và phí gia hạn được ghi nhận là phí phát sinh; chưa có trạng thái “đã thu/chưa thu”, biên lai hoặc cổng thanh toán.
-- **HTTPS production:** code đã có HTTPS redirection/HSTS theo môi trường nhưng chứng chỉ TLS, reverse proxy, domain và cấu hình máy chủ phải làm ở nơi triển khai.
-- **Đa ngôn ngữ:** các khu vực chính được hỗ trợ Việt/Anh, còn một số nội dung quản trị/validation cần rà soát nếu rubric yêu cầu tất cả chuỗi phải dịch.
-- **Kiểm thử:** cần chạy `dotnet build` và `dotnet test` thực tế. Không ghi vào báo cáo những kiểm thử chưa thực hiện.
+Nhóm sử dụng Trello để tổng hợp và theo dõi các đầu việc của bài tập lớn. Bảng gồm các cột **Cần Làm**, **Đang Thực Hiện**, **Kiểm Thử** và **Hoàn Thành**; trạng thái thẻ cần phản ánh tiến độ thực tế.
 
-## Kiểm tra package có lỗ hổng
+**Link Trello:** https://trello.com/b/BoHNkTaI/btl-lap-trinh-web-quan-ly-thu-vien-nhom-8
 
-```powershell
-dotnet list .\ThuVien.csproj package --vulnerable --include-transitive
-```
+## 11. Ghi chú bảo mật và bàn giao
 
-Dự án ghim `System.Security.Cryptography.Pkcs` ở phiên bản `10.0.13` và các gói Microsoft chính ở nhánh `10.0.13` nhằm tránh phiên bản `9.0.11` đã bị cảnh báo. Vẫn cần chạy lệnh trên sau `dotnet restore` để kiểm tra cảnh báo phát sinh từ các dependency khác.
-
-## Tài liệu rà soát kỹ thuật và chuẩn bị nghiệm thu
-
-Thư mục `docs/` hiện có thêm các tài liệu được tổng hợp theo mã nguồn:
-- `PROJECT_OVERVIEW.md`: mục tiêu, kiến trúc, vai trò và cách chạy.
-- `DATABASE_SCHEMA.md`: entity, quan hệ và ràng buộc được khai báo trong mã nguồn.
-- `TEST_CASES.md`: kịch bản kiểm thử; những trường hợp chưa chạy được ghi rõ là chưa chạy.
-- `SCREENSHOT_CHECKLIST.md`: danh sách ảnh chụp trực tiếp từ website để chuẩn bị báo cáo.
-- `ENGINEERING_REVIEW.md`: nhận xét tĩnh, thay đổi thực hiện và các rủi ro cần xác minh.
-
-Trong lần rà soát tiếp theo, `Services/LoanService.cs` có bổ sung kiểm tra lại giới hạn số sách và trạng thái thẻ bên trong transaction khi lập phiếu. **Thay đổi này chưa được build/test trong môi trường tạo gói**, do không có .NET SDK tại đây. Trước khi thay thế bản đang chạy, hãy backup project/database và chạy các lệnh ở `docs/TEST_CASES.md` trên máy Windows.
+- Không đưa mật khẩu cá nhân, secret, token hoặc thông tin kết nối riêng tư lên repository công khai.
+- Các tài khoản demo trong README chỉ phục vụ trình diễn bài tập lớn; không dùng mật khẩu này trên dịch vụ khác.
+- Kiểm tra `appsettings.json`, file hướng dẫn và script SQL trước khi công khai repository.
+- Không đưa các thư mục build (`bin/`, `obj/`, `.vs/`, `TestResults/`) hoặc file database backup `.bak` lên GitHub nếu không có yêu cầu rõ ràng.
+- Cơ sở dữ liệu LocalDB lưu trên máy chạy ứng dụng và không tự động đi kèm repository; nếu cần chuyển dữ liệu mẫu, cung cấp backup hoặc script khởi tạo phù hợp qua kênh được giảng viên chấp nhận.
