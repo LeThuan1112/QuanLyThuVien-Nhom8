@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using ThuVien.Models;
 
@@ -6,7 +7,7 @@ namespace ThuVien.Data;
 // Bổ sung bảng / cột mới vào CSDL đã tồn tại (EnsureCreated không tự thêm vào CSDL cũ)
 public static class DbBootstrap
 {
-    public static void EnsureExtras(AppDbContext db)
+    public static void EnsureExtras(AppDbContext db, IWebHostEnvironment environment)
     {
         db.Database.ExecuteSqlRaw(@"
 IF OBJECT_ID(N'[AuditLogs]', N'U') IS NULL
@@ -98,11 +99,14 @@ BEGIN
         CREATE INDEX [IX_BookReservations_ReaderId_Status_RequestedAt] ON [BookReservations] ([ReaderId], [Status], [RequestedAt]);
 END;");
 
-        // Gắn ảnh bìa ngoài cho vài bản ghi demo cũ nếu trường này còn trống; không ghi đè ảnh do nhân viên nhập.
-        db.Database.ExecuteSqlRaw(@"
+        // Chỉ bổ sung ảnh bìa demo trong Development; không cập nhật dữ liệu khi chạy Production.
+        if (environment.IsDevelopment())
+        {
+            db.Database.ExecuteSqlRaw(@"
 UPDATE [Books] SET [CoverImageUrl] = N'https://covers.openlibrary.org/b/isbn/9780132350884-L.jpg', [ISBN] = COALESCE(NULLIF([ISBN], N''), N'9780132350884') WHERE [BookCode] = N'S001' AND ([CoverImageUrl] IS NULL OR [CoverImageUrl] = N'');
 UPDATE [Books] SET [CoverImageUrl] = N'https://covers.openlibrary.org/b/isbn/9780262033848-L.jpg', [ISBN] = COALESCE(NULLIF([ISBN], N''), N'9780262033848') WHERE [BookCode] = N'S002' AND ([CoverImageUrl] IS NULL OR [CoverImageUrl] = N'');
 UPDATE [Books] SET [CoverImageUrl] = N'https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg' WHERE [BookCode] = N'S005' AND ([CoverImageUrl] IS NULL OR [CoverImageUrl] = N'');");
+        }
 
         // Tạo unique filtered index nếu database cũ không có liên kết bị trùng.
         // Nếu dữ liệu lịch sử đang trùng, không làm ứng dụng khởi động thất bại; quản trị viên có thể xử lý riêng.

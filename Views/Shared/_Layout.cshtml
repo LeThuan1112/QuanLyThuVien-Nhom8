@@ -108,6 +108,34 @@ else
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link @aHome" asp-controller="Home" asp-action="Index">@L["Nav_Home"]</a></li>
                     <li class="nav-item"><a class="nav-link @aBooks" asp-controller="Books" asp-action="Index">@L["Nav_Books"]</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-headset me-1"></i>@(lang == "en" ? "Contact" : "Liên hệ")
+                        </a>
+                        <div class="dropdown-menu p-0 shadow border-0 overflow-hidden" style="min-width:300px;max-width:92vw">
+                            <div class="d-flex align-items-center gap-3 p-3 border-bottom bg-body-tertiary">
+                                <img src="~/img/contact.jpg" alt="Lê Văn Thuận" class="rounded-circle flex-shrink-0" width="56" height="56" style="object-fit:cover"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                                <span class="rounded-circle bg-primary text-white fw-bold flex-shrink-0 align-items-center justify-content-center" style="display:none;width:56px;height:56px;font-size:1.25rem">LT</span>
+                                <div class="lh-sm">
+                                    <div class="fw-semibold">@(lang == "en" ? "Contact & support" : "Liên hệ và hỗ trợ")</div>
+                                    <div class="text-muted small mt-1">Lê Văn Thuận</div>
+                                </div>
+                            </div>
+                            <a class="dropdown-item d-flex align-items-center gap-3 px-3 py-2" href="tel:0373643096">
+                                <span class="rounded-circle bg-success-subtle text-success d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width:40px;height:40px"><i class="bi bi-telephone-fill"></i></span>
+                                <span class="lh-sm"><span class="d-block small text-muted">@(lang == "en" ? "Phone" : "Điện thoại")</span><span class="fw-semibold">0373643096</span></span>
+                            </a>
+                            <a class="dropdown-item d-flex align-items-center gap-3 px-3 py-2" href="https://zalo.me/0373643096" target="_blank" rel="noopener noreferrer">
+                                <span class="rounded-circle text-white fw-bold d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width:40px;height:40px;background:#0068ff;font-size:.7rem">Zalo</span>
+                                <span class="lh-sm"><span class="d-block small text-muted">Zalo</span><span class="fw-semibold">0373643096</span></span>
+                            </a>
+                            <a class="dropdown-item d-flex align-items-center gap-3 px-3 py-2" href="mailto:Thuanss22ss@gmail.com">
+                                <span class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width:40px;height:40px"><i class="bi bi-envelope-fill"></i></span>
+                                <span class="lh-sm text-break"><span class="d-block small text-muted">Gmail</span><span class="fw-semibold">Thuanss22ss@gmail.com</span></span>
+                            </a>
+                        </div>
+                    </li>
                     @if (isReader)
                     {
                         <li class="nav-item"><a class="nav-link @aReaderHome" asp-controller="Home" asp-action="ReaderHome">@L["Nav_MyPage"]</a></li>

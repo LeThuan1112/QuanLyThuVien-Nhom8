@@ -259,6 +259,27 @@ public class LoanService
                 await tx.RollbackAsync();
                 return new ServiceResult(false, "Phiếu này đã trả hết sách, không thể gia hạn.");
             }
+
+            // Không gia hạn nếu độc giả khác đang chờ hoặc đang được giữ chỗ cho sách chưa trả.
+            var now = DateTime.Now;
+            var outstandingBookIds = loan.Details
+                .Where(d => d.ReturnDate == null)
+                .Select(d => d.BookId)
+                .Distinct()
+                .ToList();
+            var hasOtherReaderReservation = await _db.BookReservations.AnyAsync(r =>
+                outstandingBookIds.Contains(r.BookId)
+                && r.ReaderId != loan.ReaderId
+                && (r.Status == ReservationStatuses.Waiting
+                    || (r.Status == ReservationStatuses.Ready
+                        && r.ExpiresAt != null
+                        && r.ExpiresAt > now)));
+            if (hasOtherReaderReservation)
+            {
+                await tx.RollbackAsync();
+                return new ServiceResult(false,
+                    "Không thể gia hạn vì có độc giả khác đang đặt trước một trong các sách chưa trả.");
+            }
             if (loan.DueDate.Date < DateTime.Today)
             {
                 await tx.RollbackAsync();

@@ -229,7 +229,7 @@ using (var scope = app.Services.CreateScope())
     var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<User>>();
 
     db.Database.EnsureCreated();
-    DbBootstrap.EnsureExtras(db);
+    DbBootstrap.EnsureExtras(db, app.Environment);
 
     // Chỉ tạo tài khoản/sách mẫu trong Development; không tự tạo admin mặc định khi triển khai.
     if (app.Environment.IsDevelopment())
